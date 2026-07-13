@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Push Database Migrations",
+  "description": "Push database migrations after task completion",
+  "version": "1",
+  "when": {
+    "type": "postTaskExecution"
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "cd supabase && supabase db push"
+  }
+}

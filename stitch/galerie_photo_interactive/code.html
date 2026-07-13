@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&amp;family=Noto+Serif:ital,wght@0,400;0,500;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed": "#cbe7f6",
+                    "on-primary-fixed": "#3b0a00",
+                    "primary-fixed-dim": "#ffb59f",
+                    "inverse-primary": "#ffb59f",
+                    "on-secondary-fixed": "#011f29",
+                    "surface-bright": "#fff8f5",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed-variant": "#76321d",
+                    "on-tertiary-fixed-variant": "#4c463c",
+                    "on-background": "#1e1b18",
+                    "on-error-container": "#93000a",
+                    "on-surface": "#1e1b18",
+                    "surface-container-low": "#fbf2ed",
+                    "on-primary-container": "#fffbff",
+                    "tertiary-fixed": "#ebe1d4",
+                    "surface-container": "#f5ece7",
+                    "primary": "#914630",
+                    "tertiary-fixed-dim": "#cfc5b9",
+                    "on-tertiary": "#ffffff",
+                    "secondary-container": "#cbe7f6",
+                    "surface-variant": "#e9e1dc",
+                    "primary-container": "#af5e46",
+                    "secondary-fixed-dim": "#afcbd9",
+                    "on-error": "#ffffff",
+                    "on-secondary-fixed-variant": "#304a56",
+                    "outline-variant": "#dac1bb",
+                    "surface": "#fff8f5",
+                    "error": "#ba1a1a",
+                    "inverse-surface": "#34302c",
+                    "background": "#fff8f5",
+                    "outline": "#87736d",
+                    "surface-container-highest": "#e9e1dc",
+                    "on-surface-variant": "#54433e",
+                    "on-tertiary-fixed": "#1f1b13",
+                    "secondary": "#48626f",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary": "#625b51",
+                    "primary-fixed": "#ffdbd1",
+                    "on-secondary-container": "#4e6875",
+                    "on-tertiary-container": "#fffbff",
+                    "tertiary-container": "#7b7469",
+                    "surface-tint": "#944932",
+                    "surface-dim": "#e1d8d4",
+                    "error-container": "#ffdad6",
+                    "surface-container-high": "#efe6e2",
+                    "inverse-on-surface": "#f8efea",
+                    "on-primary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "base": "8px",
+                    "max-width": "1100px",
+                    "section-gap": "80px",
+                    "margin-page": "32px",
+                    "content-gap": "24px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Manrope"],
+                    "display": ["Noto Serif"],
+                    "headline-lg": ["Noto Serif"],
+                    "headline-md": ["Noto Serif"],
+                    "body-md": ["Manrope"],
+                    "label-sm": ["Manrope"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "display": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.3", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .masonry-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-auto-rows: 20px;
+            gap: 24px;
+        }
+        .masonry-item {
+            grid-row-end: span 15;
+        }
+        .masonry-item-tall {
+            grid-row-end: span 22;
+        }
+        .masonry-item-short {
+            grid-row-end: span 12;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md min-h-screen pb-32">
+<!-- TopAppBar Shell -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-stone-50/80 backdrop-blur-md border-b border-orange-100/20 shadow-sm">
+<div class="flex items-center gap-4">
+<button class="text-orange-700">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="text-2xl font-serif italic tracking-wide text-orange-800">Sonia &amp; Aimé</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-orange-700" data-icon="favorite">favorite</span>
+</div>
+</header>
+<main class="pt-24 px-6 max-w-[1100px] mx-auto">
+<!-- Hero Section / Title -->
+<section class="text-center mb-16 space-y-4">
+<h2 class="font-display text-display text-primary">Galerie de Souvenirs</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto italic">
+                Chaque photo raconte une partie de notre histoire. Merci de faire partie de ces moments précieux.
+            </p>
+<div class="pt-6">
+<button class="bg-primary text-on-primary px-8 py-3 rounded-full font-label-sm uppercase flex items-center gap-2 mx-auto shadow-md hover:bg-primary-container transition-all duration-300 transform hover:-translate-y-1">
+<span class="material-symbols-outlined text-sm" data-icon="add_a_photo">add_a_photo</span>
+                    Ajouter une photo
+                </button>
+</div>
+</section>
+<!-- Bento/Masonry Style Gallery -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Photo 1 -->
+<div class="group relative overflow-hidden rounded-xl bg-surface-container shadow-sm">
+<img class="w-full h-[400px] object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A sophisticated outdoor wedding celebration in a lush French garden. The scene is bathed in warm golden hour sunlight, featuring elegant table settings with terracotta accents and delicate floral arrangements. The mood is joyful and intimate, reflecting a timeless romantic editorial aesthetic with soft shadows and creamy highlights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAT8dkU7zWfTmK5ESHDWNhm5ugjKBPe1Lf-9PGAcGOjFDIWDMLJRiTCJF4-wZL_CWfJYA3-Yxj5K3JNEbCxPainMZwGs7cyMG1dJFlSoIJd_72lCGu14vNA2sSrmbKcqT3GmQ3Lqw3eEoYfTtFvDnOWtQeLaLn4PSmVkEOHKlQS1xKlKr1Pl_g_igh4hSo9jLtxJyBcrlW0dro_0hUlBy9cjVW_wVQ33ytQ17KkvursTTJclFqejHoE-OfOgIHjYBBj7Tamb9nPOS0W"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+<div class="flex justify-between items-center text-white">
+<span class="font-body-md italic text-sm">Le jour où tout a commencé</span>
+<button class="p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition-colors">
+<span class="material-symbols-outlined" data-icon="favorite" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Photo 2 -->
+<div class="group relative overflow-hidden rounded-xl bg-surface-container shadow-sm lg:translate-y-8">
+<img class="w-full h-[500px] object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A close-up of a bride and groom's hands intertwined, focusing on the intricate details of their wedding attire and rings. The lighting is soft and diffused, creating a serene and high-end feel. The palette consists of warm whites, creams, and earthy terracotta tones, presented in a minimalist and clean layout." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLbgwgVnQap-oG2bG5y9Jiw6UFWpQR0O9fBZG64ZHz7v9Egb_fDNZR_icS4yGsdianOony5w7EmuJHZGZkuPQkwxTQOAM937jbFuZokJUu2IEWvQSjx7d3y6rAjlxZ78xJJqOI7dCsOe_IcWRjNZRa88_HyBjVngZ61xygWsbH_eMdwy1uMZ1H3LOgAa3OhYzH7HKxNDYhfUj7AnsHGtM_vlWAjNNC-Kh951evpXJuwJjAzcaoVgJXcb7Z2BPl1Qq9Ytvg3orPDu31"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+<div class="flex justify-between items-center text-white">
+<span class="font-body-md italic text-sm">Main dans la main</span>
+<button class="p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition-colors">
+<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Photo 3 -->
+<div class="group relative overflow-hidden rounded-xl bg-surface-container shadow-sm">
+<img class="w-full h-[400px] object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A candid moment of laughter between a couple during a sophisticated evening wedding reception. The background is softly blurred with fairy lights creating a warm bokeh effect. The atmosphere is celebratory and elegant, captured in an editorial style with natural skin tones and a focus on intimate human connection." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmU79uTahBh6jm6uBHOnsR6RKf3pAVr9zVIfIstA67XozO710q4uBjqMmXSBBg0vhtex0M5vBTHoafhMXbDsy1q1T4YpyPRyBRsNyoT6duiGfhSdWLiTG4lpw2k6t8Pzu0ptEKHvz3pxEl7YFNMXpynBCmxg3E_nmtMbBaYsNupqP0tAxXyqzw1JtF-Nvu0GW0PGk4IpQWLfARBkiStdQxv7QjI0Sa0-Hwou6twvo9RX_BeDh8PJCFD3yDdZpp-qfROnV-vqdJmkP0"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+<div class="flex justify-between items-center text-white">
+<span class="font-body-md italic text-sm">Éclats de rire</span>
+<button class="p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition-colors">
+<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Photo 4 -->
+<div class="group relative overflow-hidden rounded-xl bg-surface-container shadow-sm">
+<img class="w-full h-[450px] object-cover transition-transform duration-700 group-hover:scale-105" data-alt="An ethereal view of a wedding aisle decorated with minimalist white flowers and terracotta vases. The scene is bright and airy, with soft sunlight streaming through window panes. The composition is clean and rhythmic, emphasizing the sophisticated architectural beauty of the venue in a contemporary wedding style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpCmnWnVZWZPRSHLCktP7fPssaGdvIOAHXoZa4zAyMWjFTENH8aSFRkG_LmI5sPPYcBgu-YyM6CCBJ1m7mpb1IF8F8pk7HpSgl05TJyDbqd-ptM00NGczrg-84zp03Tzc_pXWDBjmAqfZn_PFu8Qm2Xpw2ClVvsFwxayYbaWMwykVI3mQ0tjzrLrMSGoC2Qoo8cfWSAK52GOfop8ORtSVFfLpYSm1Xc9oBGS9pOJcBLqsZEC0uSY_GprjJiUkRwxygQVioZWNp4FE_"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+<div class="flex justify-between items-center text-white">
+<span class="font-body-md italic text-sm">La cérémonie</span>
+<button class="p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition-colors">
+<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Photo 5 -->
+<div class="group relative overflow-hidden rounded-xl bg-surface-container shadow-sm lg:-translate-y-8">
+<img class="w-full h-[400px] object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A portrait of a wedding cake with organic textures and minimalist design, placed on a terracotta-colored linen cloth. The lighting is low-key and dramatic, highlighting the delicate textures of the cake and the surrounding decorative elements. The overall aesthetic is one of refined elegance and artisanal quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4TPxbLOR35uANpZLb2SA0VLc_WPRyCkEewvR24mh2SOuL4fKDe43Ezg-YW2XpWgGJshyWnRkbjmyZ0RcTEPm75oFj8nSLcI4Y_VbdNmP3VCqv3KnDZe-VGPDAkBgh9ETndwgL1dwCzF-Gm6MCWFF3veaI9KxxfR0brCtgAcj7-Y3ulCkFbgVh1jBJiUF6QOa1PTUGtdkeO4mEdmKRvMWdAPFKN8_qP2nMnJrLXLhHE0X87HmYrB_oLxxve5lKLS9gYhhqU3fg8xTi"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+<div class="flex justify-between items-center text-white">
+<span class="font-body-md italic text-sm">Douceurs</span>
+<button class="p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition-colors">
+<span class="material-symbols-outlined" data-icon="favorite" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Photo 6 -->
+<div class="group relative overflow-hidden rounded-xl bg-surface-container shadow-sm">
+<img class="w-full h-[500px] object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A wide shot of guests dancing at a wedding reception under a canopy of warm glowing lights. The motion is captured with a slight artistic blur to convey energy and joy. The color palette is rich with deep oranges and warm wood tones, creating a cozy yet upscale celebratory atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1JzSmPSDLPxxQl9iaAD_Cl4qfPnvKb-49yyku3QGZi5bqLzqA52Fm0oWoHpSHrn4mcxllVbsbceHO39GtzRZnfrcc1wBVelCfNG6mrOpnYOknH6kIvndqAt4-FO-LjVCCHibWbNkfUQml0KXCsA-zURn3pajZ8vG1f7n3XONQAaptgWoiQXF4kF-xuyVRFJuGvwPPyWaS0rbzM2EBFwlAlOyOSeFn0rkY0d4zu5wqztuHj9jjpIOdnp82y98jcVD_INldixhumBqj"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+<div class="flex justify-between items-center text-white">
+<span class="font-body-md italic text-sm">Soirée inoubliable</span>
+<button class="p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition-colors">
+<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Shell -->
+<footer class="w-full flex flex-col items-center gap-4 text-center px-8 py-12 bg-stone-100 border-t border-stone-200 mt-20">
+<p class="text-xs font-serif italic text-orange-800">© 2026 Sonia &amp; Aimé Francis. Fait avec amour.</p>
+<div class="flex gap-6">
+<a class="text-xs font-serif italic text-stone-400 hover:text-orange-600 transition-colors duration-300" href="#">Mentions Légales</a>
+<a class="text-xs font-serif italic text-stone-400 hover:text-orange-600 transition-colors duration-300" href="#">Contact Support</a>
+</div>
+</footer>
+<!-- BottomNavBar Shell -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-stone-50/90 backdrop-blur-lg border-t border-orange-100 rounded-t-3xl shadow-[0_-4px_12px_rgba(194,109,84,0.08)] md:hidden">
+<div class="flex flex-col items-center justify-center text-stone-400">
+<span class="material-symbols-outlined" data-icon="home_heart">home</span>
+<span class="text-[10px] font-serif uppercase tracking-tighter">Accueil</span>
+</div>
+<div class="flex flex-col items-center justify-center text-stone-400">
+<span class="material-symbols-outlined" data-icon="event_note">event_note</span>
+<span class="text-[10px] font-serif uppercase tracking-tighter">Programme</span>
+</div>
+<div class="flex flex-col items-center justify-center text-orange-800 scale-110">
+<span class="material-symbols-outlined" data-icon="photo_library" style="font-variation-settings: 'FILL' 1;">photo_library</span>
+<span class="text-[10px] font-serif uppercase tracking-tighter font-semibold">Galerie</span>
+</div>
+<div class="flex flex-col items-center justify-center text-stone-400">
+<span class="material-symbols-outlined" data-icon="map">map</span>
+<span class="text-[10px] font-serif uppercase tracking-tighter">Carte</span>
+</div>
+<div class="flex flex-col items-center justify-center text-stone-400">
+<span class="material-symbols-outlined" data-icon="mail_lock">mail_lock</span>
+<span class="text-[10px] font-serif uppercase tracking-tighter">RSVP</span>
+</div>
+</nav>
+</body></html>

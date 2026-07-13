@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,500;1,400&amp;family=Manrope:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed": "#cbe7f6",
+                    "on-primary-fixed": "#3b0a00",
+                    "primary-fixed-dim": "#ffb59f",
+                    "inverse-primary": "#ffb59f",
+                    "on-secondary-fixed": "#011f29",
+                    "surface-bright": "#fff8f5",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed-variant": "#76321d",
+                    "on-tertiary-fixed-variant": "#4c463c",
+                    "on-background": "#1e1b18",
+                    "on-error-container": "#93000a",
+                    "on-surface": "#1e1b18",
+                    "surface-container-low": "#fbf2ed",
+                    "on-primary-container": "#fffbff",
+                    "tertiary-fixed": "#ebe1d4",
+                    "surface-container": "#f5ece7",
+                    "primary": "#914630",
+                    "tertiary-fixed-dim": "#cfc5b9",
+                    "on-tertiary": "#ffffff",
+                    "secondary-container": "#cbe7f6",
+                    "surface-variant": "#e9e1dc",
+                    "primary-container": "#af5e46",
+                    "secondary-fixed-dim": "#afcbd9",
+                    "on-error": "#ffffff",
+                    "on-secondary-fixed-variant": "#304a56",
+                    "outline-variant": "#dac1bb",
+                    "surface": "#fff8f5",
+                    "error": "#ba1a1a",
+                    "inverse-surface": "#34302c",
+                    "background": "#fff8f5",
+                    "outline": "#87736d",
+                    "surface-container-highest": "#e9e1dc",
+                    "on-surface-variant": "#54433e",
+                    "on-tertiary-fixed": "#1f1b13",
+                    "secondary": "#48626f",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary": "#625b51",
+                    "primary-fixed": "#ffdbd1",
+                    "on-secondary-container": "#4e6875",
+                    "on-tertiary-container": "#fffbff",
+                    "tertiary-container": "#7b7469",
+                    "surface-tint": "#944932",
+                    "surface-dim": "#e1d8d4",
+                    "error-container": "#ffdad6",
+                    "surface-container-high": "#efe6e2",
+                    "inverse-on-surface": "#f8efea",
+                    "on-primary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "base": "8px",
+                    "max-width": "1100px",
+                    "section-gap": "80px",
+                    "margin-page": "32px",
+                    "content-gap": "24px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Manrope"],
+                    "display": ["Noto Serif"],
+                    "headline-lg": ["Noto Serif"],
+                    "headline-md": ["Noto Serif"],
+                    "body-md": ["Manrope"],
+                    "label-sm": ["Manrope"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "display": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.3", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hero-gradient {
+            background: linear-gradient(to bottom, rgba(255, 248, 245, 0) 0%, rgba(255, 248, 245, 0.9) 80%, rgba(255, 248, 245, 1) 100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md overflow-x-hidden">
+<!-- TopAppBar Shell -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-stone-50/80 backdrop-blur-md border-b border-orange-100/20 shadow-sm">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-orange-700">menu</span>
+</div>
+<div class="text-2xl font-serif text-orange-800 italic tracking-wide">Sonia &amp; Aimé</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-orange-700">favorite</span>
+</div>
+</header>
+<main class="min-h-screen pt-16">
+<!-- Hero Section -->
+<section class="relative h-[751px] w-full flex items-center justify-center overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover" data-alt="A cinematic, high-fashion portrait of an elegant African couple in a romantic embrace, set against a warm, sun-drenched architectural background in Libreville. The lighting is soft and golden, highlighting the textures of their modern wedding attire. The overall mood is sophisticated and intimate, utilizing a palette of rich terracotta, cream, and soft blues to create an editorial photography aesthetic that feels timeless and high-end." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAN7oS7IyE2FOJkzbJsdQT-8h2hY8N55iWp_Me6xixihgVMJHBnkreVL-uOQSM2UCMFl_jiXtj8Aj5I6cgmyi6DJHMUzl6KmQvwK4c-OTVyqqO9DS6g2ke9XZIKgOJXcU7hUwW5X2gPSOeNNhpF5Kzxy7wdUTK0D0Gu-n4fHQ2OkGexvoeI0ldJWNbJb8qyyAciOScc4GbXRkUVNPrSo_k1NpIRBC26jEBxSqd8ugdkEze-gVUPY41E15y7CHs7qF2lJfpDZJwXemyq"/>
+<div class="absolute inset-0 hero-gradient"></div>
+</div>
+<div class="relative z-10 text-center px-6 max-w-4xl mx-auto">
+<span class="font-label-sm text-label-sm text-primary tracking-[0.3em] uppercase mb-6 block">Save the Date</span>
+<h1 class="font-display text-display text-on-surface mb-6">Sonia &amp; Aimé Francis</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto italic">
+                    Sonia &amp; Aimé Francis vous invitent à leur mariage religieux, coutumier et civil à Libreville.
+                </p>
+<div class="mt-12">
+<button class="bg-primary text-on-primary px-10 py-4 rounded-full font-label-sm uppercase tracking-widest hover:bg-primary-container transition-all shadow-md">
+                        Réserver ma place (RSVP)
+                    </button>
+</div>
+</div>
+</section>
+<!-- Countdown Section (Bento Style) -->
+<section class="py-20 px-6 max-w-[1100px] mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<!-- Main Date Card -->
+<div class="md:col-span-2 bg-surface-container rounded-full p-10 flex flex-col justify-center items-center text-center shadow-sm">
+<div class="text-primary font-display text-headline-lg mb-2">28 Novembre 2026</div>
+<div class="font-label-sm text-label-sm text-outline tracking-widest uppercase">Libreville, Gabon</div>
+</div>
+<!-- Countdown Boxes -->
+<div class="md:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-4">
+<div class="bg-tertiary-fixed rounded-xl p-6 flex flex-col items-center justify-center border border-outline-variant/30">
+<span class="font-display text-headline-md text-on-tertiary-fixed">640</span>
+<span class="font-label-sm text-label-sm text-on-tertiary-fixed-variant uppercase">Jours</span>
+</div>
+<div class="bg-tertiary-fixed rounded-xl p-6 flex flex-col items-center justify-center border border-outline-variant/30">
+<span class="font-display text-headline-md text-on-tertiary-fixed">12</span>
+<span class="font-label-sm text-label-sm text-on-tertiary-fixed-variant uppercase">Heures</span>
+</div>
+<div class="bg-tertiary-fixed rounded-xl p-6 flex flex-col items-center justify-center border border-outline-variant/30">
+<span class="font-display text-headline-md text-on-tertiary-fixed">45</span>
+<span class="font-label-sm text-label-sm text-on-tertiary-fixed-variant uppercase">Min</span>
+</div>
+<div class="bg-tertiary-fixed rounded-xl p-6 flex flex-col items-center justify-center border border-outline-variant/30">
+<span class="font-display text-headline-md text-on-tertiary-fixed">08</span>
+<span class="font-label-sm text-label-sm text-on-tertiary-fixed-variant uppercase">Sec</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Ceremonies Grid -->
+<section class="py-20 px-6 bg-surface-container-low">
+<div class="max-w-[1100px] mx-auto">
+<div class="text-center mb-16">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-4 italic">Les Célébrations</h2>
+<p class="text-on-surface-variant font-body-md max-w-xl mx-auto">Trois moments uniques pour sceller notre union, entourés de nos familles et amis les plus chers.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Traditionnel -->
+<div class="bg-surface rounded-xl overflow-hidden shadow-sm border border-orange-100/50 hover:shadow-md transition-shadow">
+<div class="h-48 bg-primary-fixed-dim flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-on-primary-fixed">diversity_3</span>
+</div>
+<div class="p-8">
+<h3 class="font-headline-md text-on-surface mb-2">Cérémonie Traditionnelle</h3>
+<p class="text-body-md text-on-surface-variant mb-4">Le respect de nos traditions et l'union de nos deux familles.</p>
+<span class="text-primary font-label-sm uppercase tracking-wider">08:30 — Résidence Familiale</span>
+</div>
+</div>
+<!-- Bénédiction -->
+<div class="bg-surface rounded-xl overflow-hidden shadow-sm border border-orange-100/50 hover:shadow-md transition-shadow">
+<div class="h-48 bg-secondary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-on-secondary-fixed">church</span>
+</div>
+<div class="p-8">
+<h3 class="font-headline-md text-on-surface mb-2">Bénédiction</h3>
+<p class="text-body-md text-on-surface-variant mb-4">Une bénédiction solennelle de notre union devant Dieu.</p>
+<span class="text-primary font-label-sm uppercase tracking-wider">14:00 — Cathédrale Notre-Dame</span>
+</div>
+</div>
+<!-- Civil -->
+<div class="bg-surface rounded-xl overflow-hidden shadow-sm border border-orange-100/50 hover:shadow-md transition-shadow">
+<div class="h-48 bg-tertiary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-on-tertiary-fixed">gavel</span>
+</div>
+<div class="p-8">
+<h3 class="font-headline-md text-on-surface mb-2">Mariage Civil</h3>
+<p class="text-body-md text-on-surface-variant mb-4">L'engagement légal devant Monsieur le Maire et nos témoins.</p>
+<span class="text-primary font-label-sm uppercase tracking-wider">16:00 — Mairie d'Akanda</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- RSVP Teaser -->
+<section class="py-24 px-6 text-center bg-background">
+<div class="max-w-2xl mx-auto border-t border-b border-orange-100/30 py-16">
+<span class="material-symbols-outlined text-primary text-5xl mb-6">mail_lock</span>
+<h2 class="font-display text-headline-lg mb-6">Confirmez votre présence</h2>
+<p class="font-body-md text-on-surface-variant mb-10">Nous avons hâte de célébrer ce nouveau chapitre avec vous. Merci de nous confirmer votre présence avant le 1er Septembre 2026.</p>
+<div class="flex flex-col sm:flex-row justify-center gap-4">
+<button class="bg-primary text-on-primary px-8 py-3 rounded-full font-label-sm uppercase tracking-widest transition-transform active:scale-95 shadow-lg">RSVP en ligne</button>
+<button class="border border-secondary text-secondary px-8 py-3 rounded-full font-label-sm uppercase tracking-widest hover:bg-secondary-container transition-colors">Infos Pratiques</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Shell -->
+<footer class="w-full flex flex-col items-center gap-4 text-center px-8 py-12 bg-stone-100 border-t border-stone-200 mb-20 md:mb-0">
+<div class="font-serif italic text-orange-800 mb-2">Sonia &amp; Aimé Francis</div>
+<div class="text-xs font-serif italic text-stone-400">© 2026 Sonia &amp; Aimé Francis. Fait avec amour.</div>
+<div class="flex gap-6 mt-4">
+<a class="text-xs font-serif italic text-stone-400 hover:text-orange-600 transition-colors" href="#">Mentions Légales</a>
+<a class="text-xs font-serif italic text-stone-400 hover:text-orange-600 transition-colors" href="#">Contact Support</a>
+</div>
+</footer>
+<!-- NavigationDrawer Shell (Hidden by default, structure for UI) -->
+<div class="fixed inset-y-0 left-0 z-[60] flex flex-col bg-stone-50 h-full w-80 rounded-r-2xl shadow-2xl transition-transform -translate-x-full" id="drawer">
+<div class="p-8 border-b border-stone-100">
+<div class="text-orange-800 font-bold text-lg font-serif">Le Grand Jour</div>
+</div>
+<nav class="flex-1 divide-y divide-stone-100 overflow-y-auto">
+<a class="flex items-center gap-4 px-6 py-4 text-stone-600 font-serif text-lg hover:bg-stone-100" href="#">
+<span class="material-symbols-outlined text-orange-700">auto_stories</span> Notre Histoire
+            </a>
+<a class="flex items-center gap-4 px-6 py-4 text-stone-600 font-serif text-lg hover:bg-stone-100" href="#">
+<span class="material-symbols-outlined text-orange-700">card_giftcard</span> Liste de Mariage
+            </a>
+<a class="flex items-center gap-4 px-6 py-4 text-stone-600 font-serif text-lg hover:bg-stone-100" href="#">
+<span class="material-symbols-outlined text-orange-700">contact_mail</span> Contact
+            </a>
+<a class="flex items-center gap-4 px-6 py-4 text-stone-600 font-serif text-lg hover:bg-stone-100" href="#">
+<span class="material-symbols-outlined text-orange-700">admin_panel_settings</span> Admin
+            </a>
+</nav>
+</div>
+<!-- BottomNavBar Shell -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-stone-50/90 backdrop-blur-lg border-t border-orange-100 rounded-t-3xl shadow-[0_-4px_12px_rgba(194,109,84,0.08)] md:hidden">
+<div class="flex flex-col items-center justify-center text-orange-800 scale-110">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px] font-serif uppercase tracking-tighter">Accueil</span>
+</div>
+<div class="flex flex-col items-center justify-center text-stone-400">
+<span class="material-symbols-outlined">event_note</span>
+<span class="text-[10px] font-serif uppercase tracking-tighter">Programme</span>
+</div>
+<div class="flex flex-col items-center justify-center text-stone-400">
+<span class="material-symbols-outlined">photo_library</span>
+<span class="text-[10px] font-serif uppercase tracking-tighter">Galerie</span>
+</div>
+<div class="flex flex-col items-center justify-center text-stone-400">
+<span class="material-symbols-outlined">map</span>
+<span class="text-[10px] font-serif uppercase tracking-tighter">Carte</span>
+</div>
+<div class="flex flex-col items-center justify-center text-stone-400">
+<span class="material-symbols-outlined">mail_lock</span>
+<span class="text-[10px] font-serif uppercase tracking-tighter">RSVP</span>
+</div>
+</nav>
+</body></html>

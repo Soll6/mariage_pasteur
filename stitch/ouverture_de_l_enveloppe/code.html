@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,500;0,700;1,400&amp;family=Manrope:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed": "#cbe7f6",
+                    "on-primary-fixed": "#3b0a00",
+                    "primary-fixed-dim": "#ffb59f",
+                    "inverse-primary": "#ffb59f",
+                    "on-secondary-fixed": "#011f29",
+                    "surface-bright": "#fff8f5",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed-variant": "#76321d",
+                    "on-tertiary-fixed-variant": "#4c463c",
+                    "on-background": "#1e1b18",
+                    "on-error-container": "#93000a",
+                    "on-surface": "#1e1b18",
+                    "surface-container-low": "#fbf2ed",
+                    "on-primary-container": "#fffbff",
+                    "tertiary-fixed": "#ebe1d4",
+                    "surface-container": "#f5ece7",
+                    "primary": "#914630",
+                    "tertiary-fixed-dim": "#cfc5b9",
+                    "on-tertiary": "#ffffff",
+                    "secondary-container": "#cbe7f6",
+                    "surface-variant": "#e9e1dc",
+                    "primary-container": "#af5e46",
+                    "secondary-fixed-dim": "#afcbd9",
+                    "on-error": "#ffffff",
+                    "on-secondary-fixed-variant": "#304a56",
+                    "outline-variant": "#dac1bb",
+                    "surface": "#fff8f5",
+                    "error": "#ba1a1a",
+                    "inverse-surface": "#34302c",
+                    "background": "#fff8f5",
+                    "outline": "#87736d",
+                    "surface-container-highest": "#e9e1dc",
+                    "on-surface-variant": "#54433e",
+                    "on-tertiary-fixed": "#1f1b13",
+                    "secondary": "#48626f",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary": "#625b51",
+                    "primary-fixed": "#ffdbd1",
+                    "on-secondary-container": "#4e6875",
+                    "on-tertiary-container": "#fffbff",
+                    "tertiary-container": "#7b7469",
+                    "surface-tint": "#944932",
+                    "surface-dim": "#e1d8d4",
+                    "error-container": "#ffdad6",
+                    "surface-container-high": "#efe6e2",
+                    "inverse-on-surface": "#f8efea",
+                    "on-primary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "base": "8px",
+                    "max-width": "1100px",
+                    "section-gap": "80px",
+                    "margin-page": "32px",
+                    "content-gap": "24px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Manrope"],
+                    "display": ["Noto Serif"],
+                    "headline-lg": ["Noto Serif"],
+                    "headline-md": ["Noto Serif"],
+                    "body-md": ["Manrope"],
+                    "label-sm": ["Manrope"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "display": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.3", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .envelope-shadow {
+            box-shadow: 0 10px 30px -5px rgba(145, 70, 48, 0.15);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col items-center justify-center p-6">
+<!-- Hero Container -->
+<main class="max-w-max-width w-full flex flex-col items-center justify-center gap-12 py-12">
+<!-- Header Messaging -->
+<div class="text-center space-y-4 animate-fade-in">
+<h1 class="font-display text-display text-primary italic">Une invitation spéciale vous attend...</h1>
+<p class="font-body-lg text-secondary-fixed-dim uppercase tracking-widest text-sm">Sonia &amp; Aimé Francis</p>
+</div>
+<!-- Envelope Presentation -->
+<div class="relative w-full max-w-[500px] aspect-[4/3] flex items-center justify-center">
+<!-- Background Layer / Texture -->
+<div class="absolute inset-0 bg-tertiary-fixed rounded-xl envelope-shadow border border-outline-variant/30 overflow-hidden">
+<div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/linen-paper.png')]"></div>
+<!-- Artistic Flourish Background -->
+<div class="absolute -top-20 -right-20 w-64 h-64 bg-primary-fixed-dim/20 rounded-full blur-3xl"></div>
+<div class="absolute -bottom-20 -left-20 w-64 h-64 bg-secondary-fixed/30 rounded-full blur-3xl"></div>
+</div>
+<!-- Envelope Flap & Card Mockup -->
+<div class="relative z-10 w-[85%] aspect-[1.6/1] bg-surface-container-lowest rounded-sm shadow-sm flex flex-col items-center justify-center p-8 border border-outline-variant/10">
+<div class="absolute top-0 left-0 w-full h-2 bg-primary"></div>
+<!-- Wax Seal Element -->
+<div class="mb-6 flex items-center justify-center">
+<div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center shadow-lg transform rotate-12">
+<span class="material-symbols-outlined text-surface text-3xl" data-icon="favorite" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+</div>
+<div class="text-center space-y-2">
+<p class="font-headline-md text-primary font-serif italic">Le Grand Jour</p>
+<div class="h-px w-12 bg-outline-variant mx-auto"></div>
+<p class="font-label-sm text-secondary uppercase tracking-tighter">Précieux Moments</p>
+</div>
+</div>
+<!-- Foreground Image Decoration -->
+<div class="absolute -bottom-8 -right-8 w-48 h-48 z-20">
+<img alt="" class="w-full h-full object-cover rounded-full border-4 border-surface shadow-xl" data-alt="A macro photograph of delicate dried terracotta-colored flowers and soft blue eucalyptus leaves resting on a cream-colored linen surface. The lighting is soft and warm, capturing the fine textures of the petals and the organic feel of the plants. The overall style is romantic, minimalist, and editorial, perfectly matching a high-end wedding invitation aesthetic with a focus on natural elements." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAB-yU7VS7K5Dm0bfOzIcN5yvcXIixY6NVepm67iU9ELmbRmAl7ud57GCshtdBJLaqkNQ3M5nGLJ44O_T0NYXVgPeMjBsqRwBgyNx0fMVVXSpOLC2Yx_VObP02TnPhhyX2_P_Rv0ophvD-sIzSckwF-XafvYUyPH4qLNFESlOBWn3dSJdNLge5XFgSvg5nMcVaNwejpzwKm5ITVaP0XLN6beu-SC7q88Br3BG4L1hfKblrobQOrnHKpymF8LHNvXUUyyQnf41mNmJLz"/>
+</div>
+</div>
+<!-- CTA Action -->
+<div class="flex flex-col items-center gap-6">
+<button class="px-12 py-4 bg-primary text-on-primary rounded-full font-body-md text-lg tracking-wide shadow-lg hover:bg-on-primary-fixed-variant transition-all duration-300 transform active:scale-95 group flex items-center gap-3">
+                Ouvrir l'enveloppe
+                <span class="material-symbols-outlined text-surface group-hover:translate-x-1 transition-transform" data-icon="mail_lock">mail_lock</span>
+</button>
+<button class="px-8 py-2 border-b border-secondary text-secondary font-label-sm uppercase tracking-widest hover:text-primary hover:border-primary transition-colors">
+                En savoir plus
+            </button>
+</div>
+</main>
+<!-- Branding Footer (From JSON Structure) -->
+<footer class="w-full flex flex-col items-center gap-4 text-center px-8 py-12 mt-auto border-t border-stone-200">
+<p class="text-xs font-serif italic text-orange-800">© 2026 Sonia &amp; Aimé Francis. Fait avec amour.</p>
+<div class="flex gap-6">
+<a class="text-xs font-serif italic text-stone-400 hover:text-orange-600 transition-colors duration-300" href="#">Mentions Légales</a>
+<a class="text-xs font-serif italic text-stone-400 hover:text-orange-600 transition-colors duration-300" href="#">Contact Support</a>
+</div>
+</footer>
+<!-- Decorative Corner Elements -->
+<div class="fixed top-0 right-0 p-12 pointer-events-none opacity-40 hidden md:block">
+<img alt="" class="w-24 h-24 object-cover rounded-full" data-alt="A soft-focus artistic shot of light blue hydrangea petals against a warm terracotta background. The image is bright and airy with a shallow depth of field, creating a dreamy and romantic atmosphere. The composition is minimal and elegant, serving as a subtle decorative element for a luxury wedding digital interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMQ3H8kIyua_oqJh6ggMTUGiZ9sQzcKnURFHzPwbL1HhgrTTgZdH1el-pznIBhiBSQ_iiKJBQOb7q3dQhBko6knRP5B0nmJT-aiW8TlRYzIk1fXByh-12gTrJI45N9rr4zB4Jt5umgzO3c-qj5VVzeSiTb_R-mQ4V6L90xmARRTRdOX91nNGxIrBl06xv4_TF_KqkTNzqBapYuObg4y6PzIJqZZL5HqRczbl3pKq8BJ28WRrwCByKYwm971myPP4u1l7ZQpAkFciOr"/>
+</div>
+</body></html>

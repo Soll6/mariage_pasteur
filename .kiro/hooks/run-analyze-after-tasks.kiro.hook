@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Run Flutter Analyze",
+  "description": "Run Flutter analyze after task completion",
+  "version": "1",
+  "when": {
+    "type": "postTaskExecution"
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "flutter analyze"
+  }
+}
