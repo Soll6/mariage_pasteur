@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../theme/app_colors.dart';
 import '../models/wedding_data_source.dart';
+import '../widgets/drawer_opener.dart';
 
 class CarteScreen extends StatelessWidget {
   const CarteScreen({super.key});
@@ -17,9 +18,9 @@ class CarteScreen extends StatelessWidget {
             backgroundColor: AppColors.surfaceBright.withOpacity(0.8),
             elevation: 0,
             pinned: true,
-            leading: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Icon(Icons.menu, color: AppColors.primary),
+            leading: IconButton(
+              icon: Icon(Icons.menu, color: AppColors.primary),
+              onPressed: () => DrawerOpener.of(context)?.openDrawer(),
             ),
             title: const Text(
               'Sonia & Aimé',
@@ -77,9 +78,10 @@ class CarteScreen extends StatelessWidget {
         const SizedBox(height: 12),
         const Text(
           'Le Chemin vers Nous',
+          textAlign: TextAlign.center,
           style: TextStyle(
             fontFamily: 'NotoSerif',
-            fontSize: 40,
+            fontSize: 32,
             fontWeight: FontWeight.w400,
             color: AppColors.onSurface,
           ),
@@ -91,7 +93,7 @@ class CarteScreen extends StatelessWidget {
             'Nous avons hâte de vous retrouver à Libreville pour célébrer notre union. Voici tous les détails pour faciliter votre venue.',
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 15,
               color: AppColors.onSurfaceVariant,
               height: 1.5,
             ),

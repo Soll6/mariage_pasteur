@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../theme/app_colors.dart';
 import '../services/gallery_post_service.dart';
-import '../models/wedding_data.dart';
 import '../widgets/gallery_post_card.dart';
 import '../widgets/create_post_sheet.dart';
+import '../widgets/drawer_opener.dart';
 
 class GalerieScreen extends StatelessWidget {
   const GalerieScreen({super.key});
@@ -30,9 +30,9 @@ class _GalerieScreenContent extends StatelessWidget {
             backgroundColor: AppColors.surfaceBright.withOpacity(0.8),
             elevation: 0,
             pinned: true,
-            leading: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Icon(Icons.menu, color: AppColors.primary),
+            leading: IconButton(
+              icon: Icon(Icons.menu, color: AppColors.primary),
+              onPressed: () => DrawerOpener.of(context)?.openDrawer(),
             ),
             title: const Text(
               'Sonia & Aimé',
@@ -230,13 +230,14 @@ class _GalerieScreenContent extends StatelessWidget {
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: CreatePostSheet(
-          onSubmit: (content, mediaType, mediaUrl) {
-            service.createPost(
+          onSubmit: (content, mediaType, mediaUrl) async {
+            return await service.createPost(
               content: content,
               mediaType: mediaType,
               mediaUrl: mediaUrl,
             );
           },
+          onUploadMedia: (file) => service.uploadFileAndGetUrl(file),
         ),
       ),
     );

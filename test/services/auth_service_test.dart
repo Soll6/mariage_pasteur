@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:provider/provider.dart';
 import 'package:mockito/mockito.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -9,17 +8,15 @@ import 'package:mariage_pasteur/models/user_profile.dart';
 // Mock classes
 class MockSupabaseClient extends Mock implements SupabaseClient {}
 
-class MockAuth extends Mock implements AuthClient {}
+class MockAuth extends Mock implements GoTrueClient {}
 
 class MockSupabase extends Mock implements Supabase {}
 
 void main() {
   group('AuthService Tests', () {
-    late MockSupabaseClient mockClient;
     late AuthService authService;
 
     setUp(() {
-      mockClient = MockSupabaseClient();
       authService = AuthService();
     });
 

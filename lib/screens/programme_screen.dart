@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../models/wedding_data_source.dart';
+import '../widgets/drawer_opener.dart';
+import '../widgets/wedding_bottom_nav.dart';
 
 class ProgrammeScreen extends StatelessWidget {
   const ProgrammeScreen({super.key});
@@ -14,9 +16,9 @@ class ProgrammeScreen extends StatelessWidget {
             backgroundColor: AppColors.surfaceBright.withOpacity(0.8),
             elevation: 0,
             pinned: true,
-            leading: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Icon(Icons.menu, color: AppColors.primary),
+            leading: IconButton(
+              icon: Icon(Icons.menu, color: AppColors.primary),
+              onPressed: () => DrawerOpener.of(context)?.openDrawer(),
             ),
             title: const Text(
               'Sonia & Aimé',
@@ -43,13 +45,13 @@ class ProgrammeScreen extends StatelessWidget {
                   _buildHeader(),
                   const SizedBox(height: 32),
                   ...WeddingData.timeline.asMap().entries.map(
-                    (entry) => _TimelineEventCard(
-                      event: entry.value,
-                      isReversed: entry.key.isOdd,
-                    ),
-                  ),
+                        (entry) => _TimelineEventCard(
+                          event: entry.value,
+                          isReversed: entry.key.isOdd,
+                        ),
+                      ),
                   const SizedBox(height: 40),
-                  _buildCTASection(),
+                  _buildCTASection(context),
                   const SizedBox(height: 40),
                 ],
               ),
@@ -62,6 +64,7 @@ class ProgrammeScreen extends StatelessWidget {
 
   Widget _buildHeader() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const Text(
           'Notre Union',
@@ -75,6 +78,7 @@ class ProgrammeScreen extends StatelessWidget {
         const SizedBox(height: 12),
         Text(
           'Programme du Grand Jour',
+          textAlign: TextAlign.center,
           style: const TextStyle(
             fontFamily: 'NotoSerif',
             fontSize: 32,
@@ -100,7 +104,8 @@ class ProgrammeScreen extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.calendar_today_outlined, color: AppColors.primary, size: 20),
+            Icon(Icons.calendar_today_outlined,
+                color: AppColors.primary, size: 20),
             const SizedBox(width: 8),
             const Text(
               WeddingData.weddingDate,
@@ -117,7 +122,7 @@ class ProgrammeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCTASection() {
+  Widget _buildCTASection(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -137,7 +142,7 @@ class ProgrammeScreen extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           const Text(
-            'Votre présence à nos côtés pour ces différentes étapes est le plus beau des cadeaux. Merci de confirmer votre venue avant le 30 Septembre 2026.',
+            'Votre présence à nos côtés pour ces différentes étapes est le plus beau des cadeaux. Merci de confirmer votre venue avant le ${WeddingData.rsvpDeadline}.',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
@@ -152,11 +157,19 @@ class ProgrammeScreen extends StatelessWidget {
             alignment: WrapAlignment.center,
             children: [
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const WeddingBottomNav(currentIndex: 4),
+                  ),
+                ),
                 child: const Text('RÉPONDRE À L\'INVITATION'),
               ),
               OutlinedButton(
-                onPressed: () {},
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const WeddingBottomNav(currentIndex: 3),
+                  ),
+                ),
                 child: const Text('DÉTAILS PRATIQUES'),
               ),
             ],

@@ -13,7 +13,6 @@ class PhotoModerationScreen extends StatefulWidget {
 class _PhotoModerationScreenState extends State<PhotoModerationScreen> {
   List<dynamic> _photos = [];
   bool _isLoading = true;
-  String? _error;
 
   @override
   void initState() {
@@ -25,16 +24,14 @@ class _PhotoModerationScreenState extends State<PhotoModerationScreen> {
     try {
       final adminService = context.read<AdminService>();
 
-      final stats = await adminService.getGalleryStats();
+      await adminService.getGalleryStats();
 
       setState(() {
         _isLoading = false;
-        _error = null;
       });
     } catch (e) {
       setState(() {
         _isLoading = false;
-        _error = e.toString();
       });
     }
   }
@@ -42,7 +39,7 @@ class _PhotoModerationScreenState extends State<PhotoModerationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const WeddingAppBar(title: 'Modération photos'),
+      appBar: const WeddingAppBar(title: 'Modération photos', showBackButton: true),
       body: Column(
         children: [
           // Stats

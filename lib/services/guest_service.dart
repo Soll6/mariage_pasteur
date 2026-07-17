@@ -124,7 +124,7 @@ class GuestService extends ChangeNotifier {
     };
   }
 
-  /// Add new guest
+  /// Add new guest (admin/couple only)
   Future<bool> addGuest({
     required String email,
     required String fullName,
@@ -149,6 +149,75 @@ class GuestService extends ChangeNotifier {
         print('Error adding guest: $e');
       }
       _error = 'Erreur lors de l\'ajout de l\'invité';
+      notifyListeners();
+      return false;
+    }
+  }
+
+  /// Self-register as guest (when user signs up via social auth or email)
+  Future<bool> selfRegister({
+    required String email,
+    required String fullName,
+  }) async {
+    try {
+      // Check if guest already exists
+      final existingGuest = await getGuestByEmail(email);
+      if (existingGuest != null) {
+        // Guest already exists, just update if needed
+        if (kDebugMode) {
+          print('Guest already exists: $email');
+        }
+        return true;
+      }
+
+      // Create new guest with pending status
+      await _client.from('guests').insert({
+        'email': email,
+        'full_name': fullName,
+        'rsvp_status': 'pending',
+        'number_of_guests': 1,
+      });
+
+      // Refresh guests list
+      await _loadGuests();
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error self-registering guest: $e');
+      }
+      _error = 'Erreur lors de l\'inscription';
+      notifyListeners();
+      return false;
+    }
+  }
+
+  /// Link guest to authenticated user
+  Future<bool> linkGuestToUser({
+    required String userId,
+    required String guestEmail,
+  }) async {
+    try {
+      // Find guest by email
+      final guest = await getGuestByEmail(guestEmail);
+      if (guest == null) {
+        if (kDebugMode) {
+          print('Guest not found for email: $guestEmail');
+        }
+        return false;
+      }
+
+      // Update user profile with guest_id
+      await _client
+          .from('user_profiles')
+          .update({'guest_id': guest.id})
+          .eq('user_id', userId);
+
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error linking guest to user: $e');
+      }
+      _error = 'Erreur lors de la liaison invité-utilisateur';
       notifyListeners();
       return false;
     }

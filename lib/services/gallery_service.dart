@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/wedding_data.dart';
 import '../services/auth_service.dart';
-import '../models/user_profile.dart';
 
 class GalleryService extends ChangeNotifier {
   final SupabaseClient _client = Supabase.instance.client;

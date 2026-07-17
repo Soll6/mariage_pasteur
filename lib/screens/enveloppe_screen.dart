@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 import '../widgets/wedding_bottom_nav.dart';
@@ -265,10 +266,12 @@ class _EnveloppeScreenState extends State<EnveloppeScreen>
                                 pageBuilder: (ctx, anim, _) =>
                                     const WeddingBottomNav(),
                                 transitionsBuilder: (ctx, anim, _, child) =>
-                                    _ShatterTransition(
-                                        animation: anim, child: child),
+                                    SplashToHomeTransition(
+                                  animation: anim,
+                                  child: child,
+                                ),
                                 transitionDuration:
-                                    const Duration(milliseconds: 1200),
+                                    const Duration(milliseconds: 1000),
                               ),
                             );
                           },
@@ -409,16 +412,6 @@ class _EnveloppeScreenState extends State<EnveloppeScreen>
         cameraControls: false,
         backgroundColor: Colors.transparent,
         rotationPerSecond: '20deg',
-      ),
-    );
-  }
-
-  Widget _buildFlower3D(double size, Color color) {
-    return SizedBox(
-      width: size,
-      height: size,
-      child: CustomPaint(
-        painter: _Flower3DPainter(color: color),
       ),
     );
   }
@@ -643,27 +636,6 @@ class _RibbonPainter extends CustomPainter {
   bool shouldRepaint(_RibbonPainter old) => old.t != t;
 }
 
-class _EnvelopePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    // Paper texture dots
-    final dotPaint = Paint()
-      ..color = Colors.white.withOpacity(0.05)
-      ..style = PaintingStyle.fill;
-    final rng = Random(42);
-    for (int i = 0; i < 80; i++) {
-      canvas.drawCircle(
-        Offset(rng.nextDouble() * size.width, rng.nextDouble() * size.height),
-        rng.nextDouble() * 1.5,
-        dotPaint,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(_EnvelopePainter old) => false;
-}
-
 class _EnvelopeFlapPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
@@ -762,63 +734,14 @@ class _FloralPainter extends CustomPainter {
   bool shouldRepaint(_FloralPainter old) => false;
 }
 
-class _Flower3DPainter extends CustomPainter {
-  final Color color;
-  _Flower3DPainter({required this.color});
+// ─── Splash to Home Transition ───────────────────────────────────────────────
 
-  @override
-  void paint(Canvas canvas, Size size) {
-    final centerX = size.width / 2;
-    final centerY = size.height / 2;
-    final petalRadius = size.width * 0.15;
-    final centerRadius = size.width * 0.08;
-
-    // Draw 6 petals
-    final paint = Paint()
-      ..color = color.withOpacity(0.8)
-      ..style = PaintingStyle.fill;
-
-    for (int i = 0; i < 6; i++) {
-      final angle = (i * 60 * pi / 180);
-      final petalX = centerX + cos(angle) * petalRadius;
-      final petalY = centerY + sin(angle) * petalRadius;
-
-      canvas.drawOval(
-        Rect.fromCenter(
-          center: Offset(petalX, petalY),
-          width: petalRadius * 0.8,
-          height: petalRadius * 1.2,
-        ),
-        paint,
-      );
-    }
-
-    // Draw center
-    canvas.drawCircle(
-      Offset(centerX, centerY),
-      centerRadius,
-      Paint()..color = const Color(0xFFFFD700).withOpacity(0.9),
-    );
-
-    // Highlight for 3D effect
-    canvas.drawCircle(
-      Offset(centerX - centerRadius * 0.4, centerY - centerRadius * 0.4),
-      centerRadius * 0.3,
-      Paint()..color = Colors.white.withOpacity(0.3),
-    );
-  }
-
-  @override
-  bool shouldRepaint(_Flower3DPainter old) => old.color != color;
-}
-
-// ─── Shatter Transition ────────────────────────────────────────────────────────
-
-class _ShatterTransition extends StatelessWidget {
+class SplashToHomeTransition extends StatelessWidget {
   final Animation<double> animation;
   final Widget child;
 
-  const _ShatterTransition({
+  const SplashToHomeTransition({
+    super.key,
     required this.animation,
     required this.child,
   });
@@ -828,16 +751,41 @@ class _ShatterTransition extends StatelessWidget {
     return AnimatedBuilder(
       animation: animation,
       builder: (context, _) {
+        final progress = Curves.easeOutCubic.transform(animation.value);
+        final reveal = 1.0 - progress;
+        final size = MediaQuery.of(context).size;
+        final radius =
+            lerpDouble(0, max(size.width, size.height) * 1.25, reveal)!;
+
         return Stack(
           children: [
-            child,
+            Transform.scale(
+              scale: 0.94 + progress * 0.06,
+              child: Opacity(
+                opacity: progress,
+                child: child,
+              ),
+            ),
             if (animation.value < 1.0)
               Positioned.fill(
                 child: IgnorePointer(
-                  child: CustomPaint(
-                    painter: _ShatterPainter(
-                      animation.value,
-                      MediaQuery.of(context).size,
+                  child: Center(
+                    child: ClipOval(
+                      child: Container(
+                        width: radius * 2,
+                        height: radius * 2,
+                        decoration: BoxDecoration(
+                          gradient: RadialGradient(
+                            colors: [
+                              const Color(0xFFFFF3D6)
+                                  .withOpacity(0.95 * reveal),
+                              const Color(0xFFDAA520).withOpacity(0.5 * reveal),
+                              Colors.transparent,
+                            ],
+                            stops: const [0.0, 0.35, 1.0],
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -847,108 +795,4 @@ class _ShatterTransition extends StatelessWidget {
       },
     );
   }
-}
-
-class _Shard {
-  final double x1, y1, x2, y2, x3, y3;
-  final double baseX, baseY;
-  final double dx, dy;
-  final double rotation;
-  final Color color;
-
-  _Shard({
-    required this.x1,
-    required this.y1,
-    required this.x2,
-    required this.y2,
-    required this.x3,
-    required this.y3,
-    required this.baseX,
-    required this.baseY,
-    required this.dx,
-    required this.dy,
-    required this.rotation,
-    required this.color,
-  });
-}
-
-class _ShatterPainter extends CustomPainter {
-  final double progress;
-  final Size size;
-  final List<_Shard> _shards;
-
-  _ShatterPainter(this.progress, this.size)
-      : _shards = _generateShards(size);
-
-  static List<_Shard> _generateShards(Size size) {
-    final rng = Random(42);
-    const count = 50;
-    final shards = <_Shard>[];
-    final colors = [
-      const Color(0xFFFFF3EC),
-      const Color(0xFFF5E6DB),
-      const Color(0xFFEDD9CC),
-      const Color(0xFFF0DFD0),
-      const Color(0xFFE8D5C4),
-    ];
-
-    for (int i = 0; i < count; i++) {
-      final cx = rng.nextDouble() * size.width;
-      final cy = rng.nextDouble() * size.height;
-      final angle1 = rng.nextDouble() * pi * 2;
-      final angle2 = angle1 + 0.3 + rng.nextDouble() * 1.0;
-      final angle3 = angle2 + 0.3 + rng.nextDouble() * 1.0;
-      final r1 = 20 + rng.nextDouble() * 60;
-      final r2 = 20 + rng.nextDouble() * 60;
-      final r3 = 20 + rng.nextDouble() * 60;
-
-      shards.add(_Shard(
-        x1: cx + cos(angle1) * r1,
-        y1: cy + sin(angle1) * r1,
-        x2: cx + cos(angle2) * r2,
-        y2: cy + sin(angle2) * r2,
-        x3: cx + cos(angle3) * r3,
-        y3: cy + sin(angle3) * r3,
-        baseX: cx - size.width / 2,
-        baseY: cy - size.height / 2,
-        dx: (cx - size.width / 2) * 0.8 + (rng.nextDouble() - 0.5) * 300,
-        dy: (cy - size.height / 2) * 0.8 + (rng.nextDouble() - 0.5) * 300,
-        rotation: (rng.nextDouble() - 0.5) * 0.8,
-        color: colors[i % colors.length],
-      ));
-    }
-    return shards;
-  }
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final eased = Curves.easeOutCubic.transform(progress);
-    final opacity = 1.0 - eased;
-
-    for (final shard in _shards) {
-      final dx = shard.dx * eased * 1.4;
-      final dy = shard.dy * eased * 1.4;
-      final rot = shard.rotation * eased;
-
-      canvas.save();
-      canvas.translate(dx, dy);
-      canvas.rotate(rot);
-
-      final paint = Paint()
-        ..color = shard.color.withOpacity(opacity * 0.95)
-        ..style = PaintingStyle.fill;
-
-      final path = Path()
-        ..moveTo(shard.x1, shard.y1)
-        ..lineTo(shard.x2, shard.y2)
-        ..lineTo(shard.x3, shard.y3)
-        ..close();
-
-      canvas.drawPath(path, paint);
-      canvas.restore();
-    }
-  }
-
-  @override
-  bool shouldRepaint(_ShatterPainter old) => old.progress != progress;
 }

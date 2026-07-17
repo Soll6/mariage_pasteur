@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:provider/provider.dart';
-
 import 'package:mariage_pasteur/widgets/auth_guard.dart';
-import 'package:mariage_pasteur/services/auth_service.dart';
-import 'package:mariage_pasteur/models/user_profile.dart';
 
 void main() {
   group('AuthGuard Tests', () {

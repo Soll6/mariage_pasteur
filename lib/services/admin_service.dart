@@ -40,7 +40,7 @@ class AdminService {
 
       int pending = 0, approved = 0, rejected = 0;
       for (final photo in photosResponse) {
-        final status = (photo as Map<String, dynamic>)['status'] as String? ?? 'pending';
+        final status = photo['status'] as String? ?? 'pending';
         switch (status) {
           case 'pending':
             pending++;

@@ -1,10 +1,14 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../theme/app_colors.dart';
 import '../models/wedding_data_source.dart';
 import '../widgets/ceremony_card.dart';
 import '../widgets/countdown_timer.dart';
+import '../widgets/drawer_opener.dart';
 import '../widgets/wedding_bottom_nav.dart';
+import '../services/auth_service.dart';
+import '../widgets/auth_modal.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -24,8 +28,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   // Staggered entry animations
   late Animation<double> _heroFade;
   late Animation<Offset> _heroSlide;
-  late Animation<double> _taglineFade;
-  late Animation<Offset> _taglineSlide;
   late Animation<double> _nameFade;
   late Animation<double> _nameScale;
   late Animation<double> _dividerWidth;
@@ -63,12 +65,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
     _heroSlide = Tween<Offset>(begin: const Offset(0, 0.08), end: Offset.zero).animate(
       CurvedAnimation(parent: _masterController, curve: const Interval(0.0, 0.5, curve: Curves.easeOutCubic)),
-    );
-    _taglineFade = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _masterController, curve: const Interval(0.2, 0.55, curve: Curves.easeOut)),
-    );
-    _taglineSlide = Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
-      CurvedAnimation(parent: _masterController, curve: const Interval(0.2, 0.55, curve: Curves.easeOutCubic)),
     );
     _nameFade = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _masterController, curve: const Interval(0.35, 0.65, curve: Curves.easeOut)),
@@ -153,7 +149,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             padding: const EdgeInsets.all(8),
             child: FadeTransition(
               opacity: _heroFade,
-              child: Icon(Icons.menu, color: AppColors.primary),
+              child: IconButton(
+                icon: Icon(Icons.menu, color: AppColors.primary),
+                onPressed: () => DrawerOpener.of(context)?.openDrawer(),
+              ),
             ),
           ),
           title: FadeTransition(
@@ -183,9 +182,74 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               padding: const EdgeInsets.all(8),
               child: FadeTransition(
                 opacity: _ctaFade,
-                child: ScaleTransition(
-                  scale: _pulse,
-                  child: const Icon(Icons.favorite, color: AppColors.primary),
+                child: Consumer<AuthService>(
+                  builder: (context, authService, child) {
+                    return PopupMenuButton<String>(
+                      onSelected: (value) => _handleProfileAction(context, value, authService),
+                      icon: Icon(
+                        authService.isAuthenticated 
+                          ? Icons.account_circle 
+                          : Icons.account_circle_outlined,
+                        color: AppColors.primary,
+                      ),
+                      itemBuilder: (context) {
+                        if (authService.isAuthenticated) {
+                          return [
+                            PopupMenuItem(
+                              value: 'profile',
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.person, size: 20),
+                                  const SizedBox(width: 12),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        authService.currentUser?.email ?? '',
+                                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                                      ),
+                                      Text(
+                                        authService.userRole == 'couple' 
+                                          ? 'Couple'
+                                          : authService.userRole == 'admin'
+                                          ? 'Admin'
+                                          : 'Invité',
+                                        style: const TextStyle(fontSize: 10, color: AppColors.outline),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const PopupMenuDivider(),
+                            const PopupMenuItem(
+                              value: 'logout',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.logout, size: 20),
+                                  SizedBox(width: 12),
+                                  Text('Se déconnecter'),
+                                ],
+                              ),
+                            ),
+                          ];
+                        } else {
+                          return [
+                            const PopupMenuItem(
+                              value: 'login',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.login, size: 20),
+                                  SizedBox(width: 12),
+                                  Text('Se connecter'),
+                                ],
+                              ),
+                            ),
+                          ];
+                        }
+                      },
+                    );
+                  },
                 ),
               ),
             ),
@@ -195,7 +259,71 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
+  void _handleProfileAction(BuildContext context, String action, AuthService authService) {
+    switch (action) {
+      case 'login':
+        showDialog(
+          context: context,
+          builder: (context) => AuthModal(
+            action: 'general',
+            onAuthenticated: () {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Connexion réussie !'),
+                  backgroundColor: AppColors.primary,
+                ),
+              );
+            },
+          ),
+        );
+        break;
+      case 'logout':
+        _showLogoutConfirmation(context, authService);
+        break;
+      case 'profile':
+        // Optionally navigate to a profile screen
+        break;
+    }
+  }
+
+  void _showLogoutConfirmation(BuildContext context, AuthService authService) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Déconnexion'),
+        content: const Text('Voulez-vous vraiment vous déconnecter ?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Annuler'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await authService.signOut();
+              if (context.mounted) {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Déconnexion réussie'),
+                    backgroundColor: AppColors.primary,
+                  ),
+                );
+              }
+            },
+            child: const Text('Se déconnecter'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildHeroSection(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 600;
+    final heroHeight = isMobile ? 652.0 : 580.0;
+    final nameFontSize = isMobile ? 32.0 : 42.0;
+
     return AnimatedBuilder(
       animation: _masterController,
       builder: (_, __) {
@@ -207,7 +335,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               children: [
                 // Photo bg with Parallax
                 Container(
-                  height: 580,
+                  height: heroHeight,
                   width: double.infinity,
                   clipBehavior: Clip.hardEdge,
                   decoration: const BoxDecoration(),
@@ -216,35 +344,37 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     child: Image.asset(
                       'assets/images/couple_photo.jpg',
                       fit: BoxFit.cover,
-                      height: 580,
+                      height: heroHeight,
                     ),
                   ),
                 ),
                 // Particle overlay
                 SizedBox(
-                  height: 580,
+                  height: heroHeight,
                   child: AnimatedBuilder(
                     animation: _particleController,
                     builder: (_, __) => CustomPaint(
                       painter: _ParticlePainter(_particleController.value),
-                      size: const Size(double.infinity, 580),
+                      size: Size(double.infinity, heroHeight),
                     ),
                   ),
                 ),
-                // Gradient overlay
+                // Gradient overlay - brume sur toute la photo
                 Container(
-                  height: 580,
+                  height: heroHeight,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        Colors.black.withOpacity(0.05),
-                        Colors.transparent,
+                        Colors.white.withOpacity(0.3),
+                        Colors.white.withOpacity(0.2),
+                        Colors.white.withOpacity(0.25),
+                        Colors.white.withOpacity(0.4),
                         AppColors.surface.withOpacity(0.7),
                         AppColors.surface,
                       ],
-                      stops: const [0, 0.3, 0.75, 1],
+                      stops: const [0, 0.2, 0.45, 0.65, 0.85, 1],
                     ),
                   ),
                 ),
@@ -257,35 +387,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Column(
                       children: [
-                        // Tagline
-                        FadeTransition(
-                          opacity: _taglineFade,
-                          child: SlideTransition(
-                            position: _taglineSlide,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                _goldLine(),
-                                const SizedBox(width: 12),
-                                const Flexible(
-                                  child: Text(
-                                    'SAVE THE DATE',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 3.5,
-                                      color: AppColors.primary,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                _goldLine(),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 14),
                         // Names with shimmer
                         FadeTransition(
                           opacity: _nameFade,
@@ -313,9 +414,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               child: Text(
                                 WeddingData.coupleName,
                                 textAlign: TextAlign.center,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontFamily: 'NotoSerif',
-                                  fontSize: 42,
+                                  fontSize: nameFontSize,
                                   fontWeight: FontWeight.w400,
                                   color: Colors.white,
                                   height: 1.2,
@@ -424,17 +525,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _goldLine() => Container(
-        width: 28,
-        height: 1,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.transparent, Color(0xFFDAA520)],
-          ),
-        ),
-      );
-
   Widget _buildCountdownSection() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 600;
+    final dateFontSize = isMobile ? 24.0 : 32.0;
+
     return AnimatedBuilder(
       animation: _masterController,
       builder: (_, child) => FadeTransition(opacity: _ctaFade, child: child),
@@ -461,16 +556,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 ],
               ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   ShaderMask(
                     shaderCallback: (b) => const LinearGradient(
                       colors: [Color(0xFFB8860B), Color(0xFFDAA520), Color(0xFFB8860B)],
                     ).createShader(b),
-                    child: const Text(
+                    child: Text(
                       WeddingData.weddingDate,
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'NotoSerif',
-                        fontSize: 32,
+                        fontSize: dateFontSize,
                         fontWeight: FontWeight.w400,
                         color: Colors.white,
                       ),
@@ -479,6 +576,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   const SizedBox(height: 8),
                   Text(
                     WeddingData.city.toUpperCase(),
+                    textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
@@ -504,20 +602,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         children: [
           _buildSectionHeader('Les Célébrations', 'Trois moments uniques pour sceller notre union, entourés de nos familles et amis les plus chers.'),
           const SizedBox(height: 32),
-          GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 1,
-            mainAxisSpacing: 16,
-            childAspectRatio: 1.3,
-            children: WeddingData.ceremonies.map((ceremony) {
-              return CeremonyCard(
-                ceremony: ceremony,
-                headerColor: AppColors.secondaryFixed,
-                iconData: _getIconForCeremony(ceremony.icon),
-              );
-            }).toList(),
-          ),
+          ...WeddingData.ceremonies.map((ceremony) => Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: CeremonyCard(
+              ceremony: ceremony,
+              headerColor: AppColors.secondaryFixed,
+              iconData: _getIconForCeremony(ceremony.icon),
+            ),
+          )),
         ],
       ),
     );
@@ -555,9 +647,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             subtitle,
             textAlign: TextAlign.center,
             style: const TextStyle(
-              fontSize: 15,
+              fontSize: 14,
               color: AppColors.onSurfaceVariant,
-              height: 1.6,
+              height: 1.5,
             ),
           ),
         ),
@@ -711,11 +803,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             spacing: 16,
             runSpacing: 8,
             children: [
-              TextButton(onPressed: () {}, child: const Text('Mentions Légales', style: TextStyle(fontSize: 11, color: AppColors.outline))),
-              TextButton(onPressed: () {}, child: const Text('Contact Support', style: TextStyle(fontSize: 11, color: AppColors.outline))),
               TextButton(
-                onPressed: () => Navigator.of(context).pushNamed('/admin/login'),
+                onPressed: () {},
+                child: const Text('Mentions Légales', style: TextStyle(fontSize: 11, color: AppColors.outline)),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamed('/admin/login');
+                },
                 child: const Text('Admin', style: TextStyle(fontSize: 11, color: AppColors.outline)),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamed('/couple/login');
+                },
+                child: const Text('Couple', style: TextStyle(fontSize: 11, color: AppColors.outline)),
               ),
             ],
           ),

@@ -1,13 +1,16 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../theme/app_colors.dart';
 
 class CreatePostSheet extends StatefulWidget {
-  final Function(String content, String mediaType, String? mediaUrl) onSubmit;
+  final Future<bool> Function(String content, String mediaType, String? mediaUrl) onSubmit;
+  final Future<String?> Function(XFile file)? onUploadMedia;
 
   const CreatePostSheet({
     super.key,
     required this.onSubmit,
+    this.onUploadMedia,
   });
 
   @override
@@ -18,6 +21,9 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
   final _textController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
   bool _isLoading = false;
+  XFile? _selectedFile;
+  String _mediaType = 'text';
+  Uint8List? _selectedFileBytes;
 
   @override
   void dispose() {
@@ -79,6 +85,62 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
               autofocus: true,
             ),
           ),
+
+          // Media preview
+          if (_selectedFile != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: _mediaType == 'image' && _selectedFileBytes != null
+                        ? Image.memory(
+                            _selectedFileBytes!,
+                            height: 200,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          )
+                        : Container(
+                            height: 200,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.videocam, size: 48, color: Colors.grey),
+                                SizedBox(height: 8),
+                                Text('Vidéo sélectionnée', style: TextStyle(color: Colors.grey)),
+                              ],
+                            ),
+                          ),
+                  ),
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: GestureDetector(
+                      onTap: () => setState(() {
+                        _selectedFile = null;
+                        _mediaType = 'text';
+                      }),
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                          color: Colors.black54,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.close, color: Colors.white, size: 20),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+          if (_selectedFile != null) const SizedBox(height: 12),
           
           // Media options
           Container(
@@ -125,13 +187,12 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
       );
       
       if (image != null) {
-        // TODO: Upload and get URL
-        // For now, just show success
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Photo sélectionnée')),
-          );
-        }
+        final bytes = await image.readAsBytes();
+        setState(() {
+          _selectedFile = image;
+          _selectedFileBytes = bytes;
+          _mediaType = 'image';
+        });
       }
     } catch (e) {
       if (mounted) {
@@ -150,11 +211,11 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
       );
       
       if (video != null) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Vidéo sélectionnée')),
-          );
-        }
+        setState(() {
+          _selectedFile = video;
+          _selectedFileBytes = null;
+          _mediaType = 'video';
+        });
       }
     } catch (e) {
       if (mounted) {
@@ -165,24 +226,58 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
     }
   }
 
-  void _submitPost() {
-    if (_textController.text.trim().isEmpty) {
+  Future<void> _submitPost() async {
+    final text = _textController.text.trim();
+    if (text.isEmpty && _selectedFile == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Veuillez entrer un message')),
+        const SnackBar(content: Text('Veuillez entrer un message ou sélectionner un média')),
       );
       return;
     }
 
     setState(() => _isLoading = true);
-    
-    widget.onSubmit(
-      _textController.text.trim(),
-      'text',
-      null,
-    );
 
-    setState(() => _isLoading = false);
-    Navigator.of(context).pop();
+    try {
+      String? mediaUrl;
+      String mediaType = _selectedFile != null ? _mediaType : 'text';
+
+      if (_selectedFile != null && widget.onUploadMedia != null) {
+        mediaUrl = await widget.onUploadMedia!(_selectedFile!).timeout(
+          const Duration(seconds: 30),
+          onTimeout: () => null,
+        );
+        if (mediaUrl == null) {
+          if (mounted) {
+            setState(() => _isLoading = false);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Échec de l\'upload. Vérifiez votre connexion.')),
+            );
+          }
+          return;
+        }
+      }
+      
+      final success = await widget.onSubmit(text, mediaType, mediaUrl);
+
+      if (mounted) {
+        setState(() => _isLoading = false);
+        if (success) {
+          Navigator.of(context).pop();
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Erreur lors de la publication')),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('Erreur submit: $e');
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erreur: $e')),
+        );
+      }
+    }
   }
 }
 

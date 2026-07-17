@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../theme/app_colors.dart';
 import '../screens/home_screen.dart';
 import '../screens/programme_screen.dart';
 import '../screens/galerie_screen.dart';
 import '../screens/carte_screen.dart';
 import '../screens/rsvp_screen.dart';
+import '../screens/profil_screen.dart';
+import '../services/auth_service.dart';
+import 'drawer_opener.dart';
 
 class WeddingBottomNav extends StatefulWidget {
   final int currentIndex;
@@ -20,6 +24,22 @@ class WeddingBottomNav extends StatefulWidget {
 
 class WeddingBottomNavState extends State<WeddingBottomNav> {
   int _currentIndex = 0;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  static const _labels = [
+    'Accueil',
+    'Programme',
+    'Galerie',
+    'Carte',
+    'RSVP',
+  ];
+  static const _icons = [
+    Icons.home_outlined,
+    Icons.event_note_outlined,
+    Icons.photo_library_outlined,
+    Icons.map_outlined,
+    Icons.mail_lock_outlined,
+  ];
 
   final List<Widget> _screens = const [
     HomeScreen(),
@@ -37,59 +57,130 @@ class WeddingBottomNavState extends State<WeddingBottomNav> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _screens[_currentIndex],
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: AppColors.surfaceBright.withOpacity(0.9),
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primary.withOpacity(0.08),
-              blurRadius: 12,
-              offset: const Offset(0, -4),
+    final auth = context.watch<AuthService>();
+
+    return DrawerOpener(
+      openDrawer: () => _scaffoldKey.currentState?.openDrawer(),
+      child: Scaffold(
+        key: _scaffoldKey,
+        drawer: _buildDrawer(auth),
+        body: _screens[_currentIndex],
+      ),
+    );
+  }
+
+  Widget _buildDrawer(AuthService auth) {
+    return Drawer(
+      child: SafeArea(
+        child: Column(
+          children: [
+            UserAccountsDrawerHeader(
+              accountName: Text(
+                auth.displayName,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              accountEmail: Text(
+                auth.currentUser?.email ?? '',
+                style: const TextStyle(fontSize: 13),
+              ),
+              currentAccountPicture: CircleAvatar(
+                backgroundColor: AppColors.primaryContainer,
+                backgroundImage: auth.currentProfile?.avatarUrl != null
+                    ? NetworkImage(auth.currentProfile!.avatarUrl!)
+                    : null,
+                child: auth.currentProfile?.avatarUrl == null
+                    ? Icon(
+                        Icons.person,
+                        size: 32,
+                        color: AppColors.primary,
+                      )
+                    : null,
+              ),
+              decoration: const BoxDecoration(
+                color: AppColors.primary,
+              ),
             ),
+            ...List.generate(_screens.length, (index) {
+              return ListTile(
+                leading: Icon(
+                  _icons[index],
+                  color: _currentIndex == index
+                      ? AppColors.primary
+                      : AppColors.outlineVariant,
+                ),
+                title: Text(
+                  _labels[index],
+                  style: TextStyle(
+                    fontWeight: _currentIndex == index
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                    color: _currentIndex == index
+                        ? AppColors.primary
+                        : AppColors.outlineVariant,
+                  ),
+                ),
+                selected: _currentIndex == index,
+                selectedTileColor: AppColors.primary.withOpacity(0.08),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  switchToTab(index);
+                },
+              );
+            }),
+            const Divider(indent: 16, endIndent: 16),
+            ListTile(
+              leading: const Icon(Icons.person_outline),
+              title: const Text('Mon Profil'),
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const ProfilScreen()),
+                );
+              },
+            ),
+            const Spacer(),
+            const Divider(indent: 16, endIndent: 16),
+            ListTile(
+              leading: const Icon(Icons.logout, color: Colors.redAccent),
+              title: const Text(
+                'Déconnexion',
+                style: TextStyle(color: Colors.redAccent),
+              ),
+              onTap: () async {
+                Navigator.of(context).pop();
+                final confirmed = await showDialog<bool>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('Déconnexion'),
+                    content: const Text('Voulez-vous vous déconnecter ?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(ctx).pop(false),
+                        child: const Text('Annuler'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.of(ctx).pop(true),
+                        child: const Text(
+                          'Déconnexion',
+                          style: TextStyle(color: Colors.redAccent),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+                if (confirmed == true && context.mounted) {
+                  await auth.signOut();
+                  if (context.mounted) {
+                    Navigator.of(context).pushReplacementNamed('/');
+                  }
+                }
+              },
+            ),
+            const SizedBox(height: 8),
           ],
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _NavItem(
-                  icon: Icons.home_outlined,
-                  label: 'Accueil',
-                  isSelected: _currentIndex == 0,
-                  onTap: () => _onItemTapped(0),
-                ),
-                _NavItem(
-                  icon: Icons.event_note_outlined,
-                  label: 'Programme',
-                  isSelected: _currentIndex == 1,
-                  onTap: () => _onItemTapped(1),
-                ),
-                _NavItem(
-                  icon: Icons.photo_library_outlined,
-                  label: 'Galerie',
-                  isSelected: _currentIndex == 2,
-                  onTap: () => _onItemTapped(2),
-                ),
-                _NavItem(
-                  icon: Icons.map_outlined,
-                  label: 'Carte',
-                  isSelected: _currentIndex == 3,
-                  onTap: () => _onItemTapped(3),
-                ),
-                _NavItem(
-                  icon: Icons.mail_lock_outlined,
-                  label: 'RSVP',
-                  isSelected: _currentIndex == 4,
-                  onTap: () => _onItemTapped(4),
-                ),
-              ],
-            ),
-          ),
         ),
       ),
     );
@@ -99,54 +190,5 @@ class WeddingBottomNavState extends State<WeddingBottomNav> {
     setState(() {
       _currentIndex = index;
     });
-  }
-
-  void _onItemTapped(int index) {
-    switchToTab(index);
-  }
-}
-
-class _NavItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _NavItem({
-    required this.icon,
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedScale(
-        scale: isSelected ? 1.1 : 1.0,
-        duration: const Duration(milliseconds: 200),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              color: isSelected ? AppColors.primary : AppColors.outlineVariant,
-              size: 24,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                color: isSelected ? AppColors.primary : AppColors.outlineVariant,
-                letterSpacing: 0.5,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

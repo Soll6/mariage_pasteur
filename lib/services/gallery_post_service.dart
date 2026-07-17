@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -6,7 +5,6 @@ import '../models/wedding_data.dart';
 
 class GalleryPostService extends ChangeNotifier {
   final SupabaseClient _client = Supabase.instance.client;
-  final ImagePicker _picker = ImagePicker();
 
   List<GalleryPost> _posts = [];
   bool _isLoading = false;
@@ -25,29 +23,18 @@ class GalleryPostService extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Try to load posts, but handle gracefully if table doesn't exist yet
+      // Use the view that already joins gallery_posts with user_profiles
       final response = await _client
-          .from('gallery_posts')
+          .from('gallery_posts_with_profiles')
           .select()
-          .order('created_at', ascending: false)
-          .catchError((e) {
-            debugPrint('Erreur chargement posts: $e');
-            // Return empty list if there's an error
-            return [];
-          });
+          .order('created_at', ascending: false);
 
-      if (response is List) {
-        _posts = response
-            .map((json) => GalleryPost.fromMap(json))
-            .toList();
-      } else {
-        _posts = [];
-      }
-      _error = null; // Clear any previous errors
+      _posts = response
+          .map((json) => GalleryPost.fromMap(json))
+          .toList();
+      _error = null;
     } catch (e) {
       debugPrint('Erreur chargement posts: $e');
-      // Don't set error if it's the first load (table might not exist yet)
-      // Just show empty state
       _posts = [];
       _error = null;
     } finally {
@@ -106,40 +93,35 @@ class GalleryPostService extends ChangeNotifier {
     }
   }
 
-  Future<void> uploadMedia(ImageSource source) async {
+  Future<String?> uploadFileAndGetUrl(XFile file) async {
     try {
-      final XFile? file = await _picker.pickImage(
-        source: source,
-        maxWidth: 1920,
-        maxHeight: 1920,
-        imageQuality: 85,
-      );
-
-      if (file == null) return;
-
       final currentUser = _client.auth.currentUser;
-      if (currentUser == null) return;
+      if (currentUser == null) {
+        debugPrint('Upload annulé: utilisateur non authentifié');
+        return null;
+      }
 
       final fileName = '${DateTime.now().millisecondsSinceEpoch}_${file.name}';
       final filePath = 'gallery/$fileName';
+      debugPrint('Upload: $filePath (${file.length} bytes)');
+
+      final fileBytes = await file.readAsBytes();
 
       await _client.storage
           .from('wedding-photos')
-          .upload(filePath, File(file.path));
+          .uploadBinary(filePath, fileBytes, fileOptions: const FileOptions(upsert: true));
 
       final publicUrl = _client.storage
           .from('wedding-photos')
           .getPublicUrl(filePath);
+      debugPrint('Upload réussi: $publicUrl');
 
-      // Create a post with the uploaded image
-      await createPost(
-        content: '',
-        mediaType: 'image',
-        mediaUrl: publicUrl,
-      );
+      return publicUrl;
     } catch (e) {
       debugPrint('Erreur upload media: $e');
       _error = 'Erreur lors de l\'upload du média';
+      notifyListeners();
+      return null;
     }
   }
 
@@ -241,6 +223,22 @@ class GalleryPostService extends ChangeNotifier {
       return true;
     } catch (e) {
       debugPrint('Erreur commentaire: $e');
+      return false;
+    }
+  }
+
+  Future<bool> deletePost(String postId) async {
+    try {
+      final currentUser = _client.auth.currentUser;
+      if (currentUser == null) return false;
+
+      await _client.from('gallery_posts').delete().eq('id', postId);
+      await loadPosts();
+      return true;
+    } catch (e) {
+      debugPrint('Erreur suppression post: $e');
+      _error = 'Erreur lors de la suppression';
+      notifyListeners();
       return false;
     }
   }

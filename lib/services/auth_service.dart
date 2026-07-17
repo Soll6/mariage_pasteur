@@ -6,11 +6,13 @@ class AuthService extends ChangeNotifier {
   final SupabaseClient _client = Supabase.instance.client;
 
   User? _currentUser;
-  String? _userRole; // 'guest', 'couple', 'admin'
+  UserProfile? _currentProfile;
+  String? _userRole;
   bool _isLoading = false;
   String? _errorMessage;
 
   User? get currentUser => _currentUser;
+  UserProfile? get currentProfile => _currentProfile;
   String? get userRole => _userRole;
   bool get isAuthenticated => _currentUser != null;
   bool get isCouple => _userRole == 'couple';
@@ -18,15 +20,52 @@ class AuthService extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
+  String get displayName {
+    if (_currentProfile?.displayName != null &&
+        _currentProfile!.displayName!.isNotEmpty) {
+      return _currentProfile!.displayName!;
+    }
+    if (_currentUser?.userMetadata?['full_name'] != null) {
+      return _currentUser!.userMetadata!['full_name'] as String;
+    }
+    if (_currentUser?.email != null) {
+      return _currentUser!.email!.split('@')[0];
+    }
+    return 'Invité';
+  }
+
   AuthService() {
     _initAuthState();
+    _setupAuthListener();
   }
 
   Future<void> _initAuthState() async {
     _currentUser = _client.auth.currentUser;
     if (_currentUser != null) {
       await _loadUserRole();
+      await ensureUserProfile();
     }
+    notifyListeners();
+  }
+
+  void _setupAuthListener() {
+    // Listen to auth state changes from Supabase
+    _client.auth.onAuthStateChange.listen((data) {
+      final event = data.event;
+      if (event == AuthChangeEvent.signedIn) {
+        _currentUser = data.session?.user;
+        _loadUserRole();
+        ensureUserProfile();
+        notifyListeners();
+      } else if (event == AuthChangeEvent.signedOut) {
+        _currentUser = null;
+        _userRole = null;
+        notifyListeners();
+      } else if (event == AuthChangeEvent.tokenRefreshed) {
+        _currentUser = data.session?.user;
+        notifyListeners();
+      }
+    });
   }
 
   /// Sign in with email and password (for admin/couple)
@@ -120,6 +159,53 @@ class AuthService extends ChangeNotifier {
     }
   }
 
+  /// Sign up with email and password (for guests)
+  Future<bool> signUp({
+    required String email,
+    required String password,
+    String? fullName,
+  }) async {
+    try {
+      _isLoading = true;
+      _errorMessage = null;
+      notifyListeners();
+
+      final response = await _client.auth.signUp(
+        email: email,
+        password: password,
+        data: {
+          'full_name': fullName ?? email.split('@')[0],
+        },
+      );
+
+      if (response.user != null) {
+        _currentUser = response.user;
+        await _loadUserRole();
+        await ensureUserProfile();
+        notifyListeners();
+        return true;
+      }
+
+      _errorMessage = 'Erreur lors de l\'inscription';
+      notifyListeners();
+      return false;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Auth error: $e');
+      }
+      if (e.toString().contains('already registered')) {
+        _errorMessage = 'Cet email est déjà utilisé. Connectez-vous.';
+      } else {
+        _errorMessage = 'Erreur lors de l\'inscription. Réessayez.';
+      }
+      notifyListeners();
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   /// Sign out user
   Future<void> signOut() async {
     try {
@@ -134,23 +220,27 @@ class AuthService extends ChangeNotifier {
     }
   }
 
-  /// Load user role from user_profiles table
+  /// Load user profile from user_profiles table
   Future<void> _loadUserRole() async {
     if (_currentUser == null) return;
 
     try {
       final response = await _client
           .from('user_profiles')
-          .select('role')
+          .select()
           .eq('user_id', _currentUser!.id)
           .maybeSingle();
 
-      _userRole = response?['role'] ?? 'guest';
+      if (response != null) {
+        _currentProfile = UserProfile.fromJson(response);
+        _userRole = _currentProfile!.role;
+      } else {
+        _userRole = 'guest';
+      }
     } catch (e) {
       if (kDebugMode) {
-        print('Error loading user role: $e');
+        print('Error loading user profile: $e');
       }
-      // Default to guest if error
       _userRole = 'guest';
     }
   }
@@ -194,6 +284,7 @@ class AuthService extends ChangeNotifier {
 
   /// Update user profile
   Future<bool> updateProfile({
+    String? displayName,
     String? avatarUrl,
     String? role,
   }) async {
@@ -201,6 +292,9 @@ class AuthService extends ChangeNotifier {
 
     try {
       final updates = <String, dynamic>{};
+      if (displayName != null) {
+        updates['display_name'] = displayName;
+      }
       if (avatarUrl != null) {
         updates['avatar_url'] = avatarUrl;
       }
@@ -208,14 +302,27 @@ class AuthService extends ChangeNotifier {
         updates['role'] = role;
       }
 
-      await _client
+      if (updates.isEmpty) return true;
+
+      updates['updated_at'] = DateTime.now().toIso8601String();
+
+      final result = await _client
           .from('user_profiles')
           .update(updates)
-          .eq('user_id', _currentUser!.id);
+          .eq('user_id', _currentUser!.id)
+          .select();
+
+      if (result.isEmpty) {
+        updates['user_id'] = _currentUser!.id;
+        updates['role'] = _userRole ?? 'guest';
+        await _client.from('user_profiles').insert(updates);
+      }
 
       if (role != null) {
         _userRole = role;
       }
+
+      await _loadUserRole();
       notifyListeners();
       return true;
     } catch (e) {
@@ -224,18 +331,5 @@ class AuthService extends ChangeNotifier {
       }
       return false;
     }
-  }
-
-  /// Test helper: Set current user (for testing only)
-  void _testSetCurrentUser(User? user) {
-    _currentUser = user;
-    _isLoading = false;
-    notifyListeners();
-  }
-
-  /// Test helper: Set user role (for testing only)
-  void _testSetRole(String role) {
-    _userRole = role;
-    notifyListeners();
   }
 }

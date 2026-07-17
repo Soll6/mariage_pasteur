@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:mariage_pasteur/services/auth_service.dart';
 import 'package:mariage_pasteur/widgets/auth_modal.dart';
 import 'package:mariage_pasteur/widgets/auth_guard.dart';
-import 'package:mariage_pasteur/models/user_profile.dart';
 
 void main() {
   group('Integration Tests - Auth Flow', () {
@@ -32,17 +31,19 @@ void main() {
             create: (_) => AuthService(),
             child: Scaffold(
               body: Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    showDialog(
-                      context: tester.element,
-                      builder: (dialogContext) => AuthModal(
-                        action: 'rsvp',
-                        onAuthenticated: () {},
-                      ),
-                    );
-                  },
-                  child: const Text('Protected Action'),
+                child: Builder(
+                  builder: (context) => ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (dialogContext) => AuthModal(
+                          action: 'rsvp',
+                          onAuthenticated: () {},
+                        ),
+                      );
+                    },
+                    child: const Text('Protected Action'),
+                  ),
                 ),
               ),
             ),

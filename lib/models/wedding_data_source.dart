@@ -7,7 +7,7 @@ class WeddingData {
   static const String weddingDate = '28 Novembre 2026';
   static DateTime targetDate = DateTime(2026, 11, 28, 10, 0, 0);
   static const String city = 'Libreville, Gabon';
-  static const String rsvpDeadline = '1er Septembre 2026';
+  static const String rsvpDeadline = '15 Novembre 2026';
 
   static const List<Ceremony> ceremonies = [
     Ceremony(
@@ -46,7 +46,7 @@ class WeddingData {
       time: '08:30',
       location: 'Résidence Familiale, Quartier Louis',
       icon: 'groups',
-      imageUrl: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800',
+      imageUrl: 'assets/images/tradition.jpg',
     ),
     TimelineEvent(
       title: 'Bénédiction',

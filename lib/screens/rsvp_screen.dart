@@ -6,6 +6,7 @@ import '../services/auth_service.dart';
 import '../services/guest_service.dart';
 import '../models/guest.dart';
 import '../widgets/auth_modal.dart';
+import '../widgets/drawer_opener.dart';
 
 class RSVPScreen extends StatefulWidget {
   const RSVPScreen({super.key});
@@ -192,9 +193,9 @@ class _RSVPScreenState extends State<RSVPScreen> {
             backgroundColor: AppColors.surfaceBright.withOpacity(0.8),
             elevation: 0,
             pinned: true,
-            leading: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Icon(Icons.menu, color: AppColors.primary),
+            leading: IconButton(
+              icon: Icon(Icons.menu, color: AppColors.primary),
+              onPressed: () => DrawerOpener.of(context)?.openDrawer(),
             ),
             title: const Text(
               'Sonia & Aimé',
@@ -236,9 +237,10 @@ class _RSVPScreenState extends State<RSVPScreen> {
       children: [
         const Text(
           'Réponse Souhaitée',
+          textAlign: TextAlign.center,
           style: TextStyle(
             fontFamily: 'NotoSerif',
-            fontSize: 40,
+            fontSize: 32,
             fontWeight: FontWeight.w400,
             color: AppColors.primary,
           ),
@@ -263,10 +265,10 @@ class _RSVPScreenState extends State<RSVPScreen> {
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              'Nous avons hâte de célébrer ce moment unique avec vous. Merci de nous confirmer votre présence avant le 15 Mai 2026.',
+              'Nous avons hâte de célébrer ce moment unique avec vous. Merci de nous confirmer votre présence avant le ${WeddingData.rsvpDeadline}.',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 15,
                 color: AppColors.onSurfaceVariant,
                 fontStyle: FontStyle.italic,
                 height: 1.5,
@@ -306,9 +308,9 @@ class _RSVPScreenState extends State<RSVPScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        const Text(
-          '20 JUIN 2026 • PARIS',
-          style: TextStyle(
+        Text(
+          '${WeddingData.weddingDate.toUpperCase()} • ${WeddingData.city.split(',').first.toUpperCase()}',
+          style: const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.15,

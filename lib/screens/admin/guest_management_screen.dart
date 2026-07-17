@@ -52,7 +52,7 @@ class _GuestManagementScreenState extends State<GuestManagementScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const WeddingAppBar(title: 'Gestion des invités'),
+      appBar: const WeddingAppBar(title: 'Gestion des invités', showBackButton: true),
       body: Column(
         children: [
           // Filter chips
@@ -347,7 +347,6 @@ class _GuestListItem extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () async {
-              final name = nameController.text.trim();
               final dietary = dietaryController.text.isEmpty ? null : dietaryController.text;
               final allergies = allergiesController.text.isEmpty ? null : allergiesController.text;
 

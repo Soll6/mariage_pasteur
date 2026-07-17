@@ -16,6 +16,9 @@ class CeremonyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final headerHeight = screenWidth < 600 ? 100.0 : 140.0;
+
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
@@ -35,7 +38,7 @@ class CeremonyCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            height: 140,
+            height: headerHeight,
             width: double.infinity,
             decoration: BoxDecoration(
               color: headerColor,
@@ -43,7 +46,7 @@ class CeremonyCard extends StatelessWidget {
             ),
             child: Icon(
               iconData,
-              size: 48,
+              size: screenWidth < 600 ? 36 : 48,
               color: AppColors.onSecondaryFixed,
             ),
           ),

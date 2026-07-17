@@ -62,6 +62,20 @@ class GalleryPost {
   });
 
   factory GalleryPost.fromMap(Map<String, dynamic> map) {
+    // Handle nested user_profiles from Supabase join
+    final userProfile = map['user_profiles'] is Map ? map['user_profiles'] as Map<String, dynamic> : null;
+
+    // Generate a fallback display name from user_id
+    String? displayName = userProfile?['display_name'] ?? map['display_name'];
+    if (displayName == null || displayName.isEmpty) {
+      final userId = map['user_id'] ?? '';
+      if (userId.isNotEmpty) {
+        displayName = 'Invité ${userId.substring(0, 6).toUpperCase()}';
+      } else {
+        displayName = 'Invité';
+      }
+    }
+
     return GalleryPost(
       id: map['id'],
       userId: map['user_id'],
@@ -75,8 +89,8 @@ class GalleryPost {
       status: map['status'] ?? 'published',
       createdAt: DateTime.parse(map['created_at']),
       updatedAt: map['updated_at'] != null ? DateTime.parse(map['updated_at']) : null,
-      displayName: map['display_name'],
-      avatarUrl: map['avatar_url'],
+      displayName: displayName,
+      avatarUrl: userProfile?['avatar_url'] ?? map['avatar_url'],
     );
   }
 }
