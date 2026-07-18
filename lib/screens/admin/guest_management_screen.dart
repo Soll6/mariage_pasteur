@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:mariage_pasteur/services/guest_service.dart';
 import 'package:mariage_pasteur/models/guest.dart';
@@ -49,10 +50,92 @@ class _GuestManagementScreenState extends State<GuestManagementScreen> {
     return guests;
   }
 
+  void _handleMenuAction(String action) {
+    final guestService = context.read<GuestService>();
+    switch (action) {
+      case 'export_csv':
+        _exportCSV(guestService);
+        break;
+      case 'copy_list':
+        _copyListToClipboard(guestService);
+        break;
+    }
+  }
+
+  void _exportCSV(GuestService guestService) {
+    final csv = guestService.exportToCSV();
+    Clipboard.setData(ClipboardData(text: csv));
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('CSV copié dans le presse-papier'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    }
+  }
+
+  void _copyListToClipboard(GuestService guestService) {
+    final guests = _getFilteredGuests();
+    final buffer = StringBuffer();
+    buffer.writeln('LISTE DES INVITÉS');
+    buffer.writeln('=' * 40);
+    buffer.writeln('');
+    
+    for (final guest in guests) {
+      final num = guest.guestNumber != null ? '#${guest.guestNumber} ' : '';
+      buffer.writeln('$num${guest.fullName}');
+      buffer.writeln('  Email: ${guest.email}');
+      buffer.writeln('  Statut: ${guest.rsvpStatus.toUpperCase()}');
+      buffer.writeln('  Invités: ${guest.numberOfGuests}');
+      if (guest.dietaryRestrictions?.isNotEmpty == true) {
+        buffer.writeln('  Régime: ${guest.dietaryRestrictions}');
+      }
+      if (guest.allergies?.isNotEmpty == true) {
+        buffer.writeln('  Allergies: ${guest.allergies}');
+      }
+      buffer.writeln('');
+    }
+    
+    Clipboard.setData(ClipboardData(text: buffer.toString()));
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Liste copiée dans le presse-papier'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const WeddingAppBar(title: 'Gestion des invités', showBackButton: true),
+      appBar: WeddingAppBar(
+        title: 'Gestion des invités',
+        showBackButton: true,
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (value) => _handleMenuAction(value),
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'export_csv',
+                child: ListTile(
+                  leading: Icon(Icons.download),
+                  title: Text('Exporter CSV'),
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'copy_list',
+                child: ListTile(
+                  leading: Icon(Icons.copy),
+                  title: Text('Copier la liste'),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
       body: Column(
         children: [
           // Filter chips
@@ -265,7 +348,16 @@ class _GuestListItem extends StatelessWidget {
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: statusColor.withOpacity(0.1),
-          child: Icon(statusIcon, color: statusColor),
+          child: guest.guestNumber != null
+              ? Text(
+                  '${guest.guestNumber}',
+                  style: TextStyle(
+                    color: statusColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                )
+              : Icon(statusIcon, color: statusColor),
         ),
         title: Text(guest.fullName),
         subtitle: Column(

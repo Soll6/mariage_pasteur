@@ -122,6 +122,19 @@ class _AuthModalState extends State<AuthModal> {
                           : 'Déjà un compte ? Se connecter',
                     ),
                   ),
+                  if (_isLoginMode) ...[
+                    const SizedBox(height: 8),
+                    TextButton(
+                      onPressed: _showForgotPassword,
+                      child: Text(
+                        'Mot de passe oublié ?',
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                  ],
                 ] else ...[
                   const Icon(
                     Icons.mark_email_read,
@@ -241,5 +254,66 @@ class _AuthModalState extends State<AuthModal> {
       _passwordController.clear();
       _errorMessage = null;
     });
+  }
+
+  void _showForgotPassword() {
+    final emailController = TextEditingController(text: _emailController.text);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Mot de passe oublié'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Entrez votre email pour recevoir un lien de réinitialisation.',
+              style: TextStyle(fontSize: 14),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: emailController,
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.email_outlined),
+              ),
+              keyboardType: TextInputType.emailAddress,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Annuler'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final email = emailController.text.trim();
+              if (email.isEmpty) return;
+
+              Navigator.of(ctx).pop();
+              setState(() => _isLoading = true);
+
+              final success = await _authService.resetPassword(email);
+
+              if (mounted) {
+                setState(() => _isLoading = false);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      success
+                          ? 'Lien de réinitialisation envoyé à $email'
+                          : (_authService.errorMessage ?? 'Erreur lors de l\'envoi'),
+                    ),
+                    backgroundColor: success ? Colors.green : Colors.red,
+                  ),
+                );
+              }
+            },
+            child: const Text('Envoyer'),
+          ),
+        ],
+      ),
+    );
   }
 }

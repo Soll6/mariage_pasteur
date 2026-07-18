@@ -246,6 +246,7 @@ class AuthService extends ChangeNotifier {
   }
 
   /// Create user profile if doesn't exist
+  /// Also links to existing guest record by email (for re-registration)
   Future<bool> ensureUserProfile() async {
     if (_currentUser == null) return false;
 
@@ -253,7 +254,7 @@ class AuthService extends ChangeNotifier {
       // Check if profile exists
       final response = await _client
           .from('user_profiles')
-          .select('id')
+          .select('id, guest_id')
           .eq('user_id', _currentUser!.id)
           .maybeSingle();
 
@@ -264,9 +265,21 @@ class AuthService extends ChangeNotifier {
           'role': 'guest',
         });
         _userRole = 'guest';
-        notifyListeners();
       }
 
+      // Link to existing guest record by email if not already linked
+      if (response == null || response['guest_id'] == null) {
+        final guestId = await _linkToExistingGuest();
+        if (guestId != null) {
+          await _client
+              .from('user_profiles')
+              .update({'guest_id': guestId})
+              .eq('user_id', _currentUser!.id);
+        }
+      }
+
+      await _loadUserRole();
+      notifyListeners();
       return true;
     } catch (e) {
       if (kDebugMode) {
@@ -276,10 +289,99 @@ class AuthService extends ChangeNotifier {
     }
   }
 
+  /// Link current user to existing guest record by email
+  Future<String?> _linkToExistingGuest() async {
+    if (_currentUser == null) return null;
+
+    try {
+      final guest = await _client
+          .from('guests')
+          .select('id')
+          .eq('email', _currentUser!.email!)
+          .maybeSingle();
+
+      return guest?['id'] as String?;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error linking to guest: $e');
+      }
+      return null;
+    }
+  }
+
   /// Clear error message
   void clearError() {
     _errorMessage = null;
     notifyListeners();
+  }
+
+  /// Send password reset email
+  Future<bool> resetPassword(String email) async {
+    try {
+      _isLoading = true;
+      _errorMessage = null;
+      notifyListeners();
+
+      await _client.auth.resetPasswordForEmail(
+        email,
+        redirectTo: 'mariage-pasteur://auth-callback',
+      );
+
+      notifyListeners();
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Reset password error: $e');
+      }
+      _errorMessage = 'Erreur lors de l\'envoi du lien. Réessayez.';
+      notifyListeners();
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// Delete user account and related data
+  /// The guest record is preserved (identified by email) so re-registration
+  /// will link back to the same guest without needing re-confirmation.
+  Future<bool> deleteAccount() async {
+    if (_currentUser == null) return false;
+
+    try {
+      _isLoading = true;
+      _errorMessage = null;
+      notifyListeners();
+
+      // 1. Delete user_profiles (linked to auth user)
+      await _client
+          .from('user_profiles')
+          .delete()
+          .eq('user_id', _currentUser!.id);
+
+      // 2. Delete the auth user via admin RPC (Supabase manages auth.users)
+      //    We use the service_role key via Edge Function or direct DB call
+      //    For now, we sign out and let the user know the account is deactivated
+      //    The auth user will remain but without a profile, it's effectively inert
+
+      // 3. Sign out
+      await _client.auth.signOut();
+
+      _currentUser = null;
+      _currentProfile = null;
+      _userRole = null;
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Delete account error: $e');
+      }
+      _errorMessage = 'Erreur lors de la suppression du compte';
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
   }
 
   /// Update user profile

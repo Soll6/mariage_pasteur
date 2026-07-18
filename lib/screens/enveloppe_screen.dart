@@ -405,7 +405,7 @@ class _EnveloppeScreenState extends State<EnveloppeScreen>
       width: 260,
       height: 190,
       child: ModelViewer(
-        src: 'assets/assets/models/envelope.glb',
+        src: 'assets/models/envelope.glb',
         alt: 'Enveloppe mariage 3D',
         autoRotate: true,
         autoRotateDelay: 0,

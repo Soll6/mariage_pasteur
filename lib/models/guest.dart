@@ -4,6 +4,7 @@ class Guest {
   final String fullName;
   final String rsvpStatus; // 'pending', 'confirmed', 'declined'
   final int numberOfGuests;
+  final int? guestNumber;
   final String? dietaryRestrictions;
   final String? allergies;
   final DateTime createdAt;
@@ -15,6 +16,7 @@ class Guest {
     required this.fullName,
     required this.rsvpStatus,
     this.numberOfGuests = 1,
+    this.guestNumber,
     this.dietaryRestrictions,
     this.allergies,
     required this.createdAt,
@@ -28,6 +30,7 @@ class Guest {
       fullName: json['full_name'] as String? ?? '',
       rsvpStatus: json['rsvp_status'] as String? ?? 'pending',
       numberOfGuests: json['number_of_guests'] as int? ?? 1,
+      guestNumber: json['guest_number'] as int?,
       dietaryRestrictions: json['dietary_restrictions'] as String?,
       allergies: json['allergies'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
@@ -44,6 +47,7 @@ class Guest {
       'full_name': fullName,
       'rsvp_status': rsvpStatus,
       'number_of_guests': numberOfGuests,
+      'guest_number': guestNumber,
       'dietary_restrictions': dietaryRestrictions,
       'allergies': allergies,
       'created_at': createdAt.toIso8601String(),
@@ -57,6 +61,7 @@ class Guest {
     String? fullName,
     String? rsvpStatus,
     int? numberOfGuests,
+    int? guestNumber,
     String? dietaryRestrictions,
     String? allergies,
     DateTime? createdAt,
@@ -68,6 +73,7 @@ class Guest {
       fullName: fullName ?? this.fullName,
       rsvpStatus: rsvpStatus ?? this.rsvpStatus,
       numberOfGuests: numberOfGuests ?? this.numberOfGuests,
+      guestNumber: guestNumber ?? this.guestNumber,
       dietaryRestrictions:
           dietaryRestrictions ?? this.dietaryRestrictions,
       allergies: allergies ?? this.allergies,

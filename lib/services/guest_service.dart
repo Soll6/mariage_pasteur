@@ -76,13 +76,33 @@ class GuestService extends ChangeNotifier {
     String? allergies,
   }) async {
     try {
-      await _client.from('guests').update({
+      final updates = <String, dynamic>{
         'rsvp_status': attending ? 'confirmed' : 'declined',
         'number_of_guests': numberOfGuests,
         'dietary_restrictions': dietaryRestrictions,
         'allergies': allergies,
         'updated_at': DateTime.now().toIso8601String(),
-      }).eq('id', guestId);
+      };
+
+      // Auto-assign guest_number when confirming
+      if (attending) {
+        // Get the next available number
+        final maxNumberResult = await _client
+            .from('guests')
+            .select('guest_number')
+            .not('guest_number', 'is', null)
+            .order('guest_number', ascending: false)
+            .limit(1)
+            .maybeSingle();
+
+        final nextNumber = (maxNumberResult?['guest_number'] as int? ?? 0) + 1;
+        updates['guest_number'] = nextNumber;
+      } else {
+        // Remove number when declining
+        updates['guest_number'] = null;
+      }
+
+      await _client.from('guests').update(updates).eq('id', guestId);
 
       // Refresh guests list
       await _loadGuests();
@@ -94,6 +114,26 @@ class GuestService extends ChangeNotifier {
       _error = 'Erreur lors de la mise à jour du RSVP';
       notifyListeners();
       return false;
+    }
+  }
+
+  /// Get guest by ID
+  Future<Guest?> getGuestById(String guestId) async {
+    try {
+      final response = await _client
+          .from('guests')
+          .select()
+          .eq('id', guestId)
+          .maybeSingle();
+
+      if (response == null) return null;
+
+      return Guest.fromJson(response);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error getting guest by ID: $e');
+      }
+      return null;
     }
   }
 
@@ -246,12 +286,25 @@ class GuestService extends ChangeNotifier {
     return _guests.where((guest) => guest.rsvpStatus == status).toList();
   }
 
-  /// Export guests as CSV
+  /// Export guests as CSV sorted by guest_number
   String exportToCSV() {
-    final lines = <String>['email,nom,statut,invités,restrictions,allergies'];
-    for (final guest in _guests) {
+    final lines = <String>['numéro,nom,email,statut,invités,restrictions,allergies'];
+    
+    // Sort: numbered guests first (by number), then unnumbered (by name)
+    final sorted = List<Guest>.from(_guests);
+    sorted.sort((a, b) {
+      if (a.guestNumber != null && b.guestNumber != null) {
+        return a.guestNumber!.compareTo(b.guestNumber!);
+      }
+      if (a.guestNumber != null) return -1;
+      if (b.guestNumber != null) return 1;
+      return a.fullName.compareTo(b.fullName);
+    });
+
+    for (final guest in sorted) {
+      final num = guest.guestNumber?.toString() ?? '';
       lines.add(
-        '${guest.email},${guest.fullName},${guest.rsvpStatus},${guest.numberOfGuests},${guest.dietaryRestrictions ?? ''},${guest.allergies ?? ''}',
+        '$num,${guest.fullName},${guest.email},${guest.rsvpStatus},${guest.numberOfGuests},${guest.dietaryRestrictions ?? ''},${guest.allergies ?? ''}',
       );
     }
     return lines.join('\n');
