@@ -4,6 +4,7 @@ import '../theme/app_colors.dart';
 import '../models/wedding_data_source.dart';
 import '../services/auth_service.dart';
 import '../services/guest_service.dart';
+import '../services/email_service.dart';
 import '../models/guest.dart';
 import '../widgets/auth_modal.dart';
 import '../widgets/drawer_opener.dart';
@@ -169,6 +170,16 @@ class _RSVPScreenState extends State<RSVPScreen> {
             backgroundColor: AppColors.primary,
             behavior: SnackBarBehavior.floating,
           ),
+        );
+
+        // Send confirmation email
+        final emailService = Provider.of<EmailService>(context, listen: false);
+        final guestEmail = authService.currentUser!.email ?? '';
+        final guestName = '${_firstNameController.text} ${_lastNameController.text}';
+        emailService.sendRsvpConfirmation(
+          to: guestEmail,
+          guestName: guestName,
+          attending: _attending,
         );
       }
     } catch (e) {

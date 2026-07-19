@@ -10,6 +10,7 @@ import 'screens/setup_screen.dart';
 import 'services/auth_service.dart';
 import 'services/guest_service.dart';
 import 'services/admin_service.dart';
+import 'services/email_service.dart';
 import 'screens/admin/admin_login_screen.dart';
 import 'screens/admin/admin_dashboard_screen.dart';
 import 'screens/admin/guest_management_screen.dart';
@@ -45,6 +46,7 @@ class MariageApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthService()),
         ChangeNotifierProvider(create: (_) => GuestService()),
         Provider(create: (_) => AdminService()),
+        ChangeNotifierProvider(create: (_) => EmailService()),
       ],
       child: Consumer<AuthService>(
         builder: (context, authService, _) {
