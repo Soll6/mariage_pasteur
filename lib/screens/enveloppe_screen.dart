@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 import '../widgets/wedding_bottom_nav.dart';
@@ -405,7 +406,7 @@ class _EnveloppeScreenState extends State<EnveloppeScreen>
       width: 260,
       height: 190,
       child: ModelViewer(
-        src: 'assets/models/envelope.glb',
+        src: kIsWeb ? '/assets/assets/models/envelope.glb' : 'assets/models/envelope.glb',
         alt: 'Enveloppe mariage 3D',
         autoRotate: true,
         autoRotateDelay: 0,
