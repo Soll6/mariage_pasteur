@@ -74,6 +74,7 @@ class GuestService extends ChangeNotifier {
     int numberOfGuests = 1,
     String? dietaryRestrictions,
     String? allergies,
+    String? preferredDrink,
   }) async {
     try {
       final updates = <String, dynamic>{
@@ -81,6 +82,7 @@ class GuestService extends ChangeNotifier {
         'number_of_guests': numberOfGuests,
         'dietary_restrictions': dietaryRestrictions,
         'allergies': allergies,
+        'preferred_drink': preferredDrink,
         'updated_at': DateTime.now().toIso8601String(),
       };
 
@@ -170,6 +172,7 @@ class GuestService extends ChangeNotifier {
     required String fullName,
     String? dietaryRestrictions,
     String? allergies,
+    String? preferredDrink,
   }) async {
     try {
       await _client.from('guests').insert({
@@ -179,6 +182,7 @@ class GuestService extends ChangeNotifier {
         'number_of_guests': 1,
         'dietary_restrictions': dietaryRestrictions,
         'allergies': allergies,
+        'preferred_drink': preferredDrink,
       });
 
       // Refresh guests list
@@ -288,7 +292,7 @@ class GuestService extends ChangeNotifier {
 
   /// Export guests as CSV sorted by guest_number
   String exportToCSV() {
-    final lines = <String>['numéro,nom,email,statut,invités,restrictions,allergies'];
+    final lines = <String>['numéro,nom,email,statut,invités,restrictions,allergies,boisson'];
     
     // Sort: numbered guests first (by number), then unnumbered (by name)
     final sorted = List<Guest>.from(_guests);
@@ -304,7 +308,7 @@ class GuestService extends ChangeNotifier {
     for (final guest in sorted) {
       final num = guest.guestNumber?.toString() ?? '';
       lines.add(
-        '$num,${guest.fullName},${guest.email},${guest.rsvpStatus},${guest.numberOfGuests},${guest.dietaryRestrictions ?? ''},${guest.allergies ?? ''}',
+        '$num,${guest.fullName},${guest.email},${guest.rsvpStatus},${guest.numberOfGuests},${guest.dietaryRestrictions ?? ''},${guest.allergies ?? ''},${guest.preferredDrink ?? ''}',
       );
     }
     return lines.join('\n');
@@ -314,5 +318,19 @@ class GuestService extends ChangeNotifier {
   void clearError() {
     _error = null;
     notifyListeners();
+  }
+
+  /// Get drink preference statistics (confirmed guests only)
+  Map<String, int> getDrinkStats() {
+    final Map<String, int> stats = {};
+    for (final guest in _guests) {
+      if (guest.rsvpStatus == 'confirmed' &&
+          guest.preferredDrink != null &&
+          guest.preferredDrink!.isNotEmpty) {
+        final drink = guest.preferredDrink!;
+        stats[drink] = (stats[drink] ?? 0) + 1;
+      }
+    }
+    return stats;
   }
 }

@@ -7,6 +7,7 @@ class Guest {
   final int? guestNumber;
   final String? dietaryRestrictions;
   final String? allergies;
+  final String? preferredDrink;
   final DateTime createdAt;
   final DateTime? updatedAt;
 
@@ -19,6 +20,7 @@ class Guest {
     this.guestNumber,
     this.dietaryRestrictions,
     this.allergies,
+    this.preferredDrink,
     required this.createdAt,
     this.updatedAt,
   });
@@ -33,6 +35,7 @@ class Guest {
       guestNumber: json['guest_number'] as int?,
       dietaryRestrictions: json['dietary_restrictions'] as String?,
       allergies: json['allergies'] as String?,
+      preferredDrink: json['preferred_drink'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: json['updated_at'] != null
           ? DateTime.parse(json['updated_at'] as String)
@@ -50,6 +53,7 @@ class Guest {
       'guest_number': guestNumber,
       'dietary_restrictions': dietaryRestrictions,
       'allergies': allergies,
+      'preferred_drink': preferredDrink,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
     };
@@ -64,6 +68,7 @@ class Guest {
     int? guestNumber,
     String? dietaryRestrictions,
     String? allergies,
+    String? preferredDrink,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -77,6 +82,7 @@ class Guest {
       dietaryRestrictions:
           dietaryRestrictions ?? this.dietaryRestrictions,
       allergies: allergies ?? this.allergies,
+      preferredDrink: preferredDrink ?? this.preferredDrink,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

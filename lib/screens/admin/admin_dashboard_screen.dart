@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:mariage_pasteur/services/auth_service.dart';
 import 'package:mariage_pasteur/services/guest_service.dart';
 import 'package:mariage_pasteur/widgets/wedding_app_bar.dart';
+import 'package:mariage_pasteur/widgets/drink_pie_chart.dart';
 
 class AdminDashboardScreen extends StatefulWidget {
   const AdminDashboardScreen({super.key});
@@ -92,6 +93,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 32),
+                    // Drink preferences chart
+                    DrinkPieChart(drinkStats: guestService.getDrinkStats()),
                     const SizedBox(height: 32),
                     // Quick actions
                     const Text(

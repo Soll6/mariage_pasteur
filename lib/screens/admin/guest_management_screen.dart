@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:mariage_pasteur/services/guest_service.dart';
 import 'package:mariage_pasteur/models/guest.dart';
 import 'package:mariage_pasteur/widgets/wedding_app_bar.dart';
+import 'package:mariage_pasteur/constants/drinks.dart';
 
 class GuestManagementScreen extends StatefulWidget {
   const GuestManagementScreen({super.key});
@@ -91,8 +92,8 @@ class _GuestManagementScreenState extends State<GuestManagementScreen> {
       if (guest.dietaryRestrictions?.isNotEmpty == true) {
         buffer.writeln('  Régime: ${guest.dietaryRestrictions}');
       }
-      if (guest.allergies?.isNotEmpty == true) {
-        buffer.writeln('  Allergies: ${guest.allergies}');
+      if (guest.preferredDrink?.isNotEmpty == true) {
+        buffer.writeln('  Boisson: ${guest.preferredDrink}');
       }
       buffer.writeln('');
     }
@@ -237,6 +238,7 @@ class _GuestManagementScreenState extends State<GuestManagementScreen> {
     final TextEditingController emailController = TextEditingController();
     final TextEditingController dietaryController = TextEditingController();
     final TextEditingController allergiesController = TextEditingController();
+    String? selectedDrink;
 
     showDialog(
       context: context,
@@ -257,11 +259,25 @@ class _GuestManagementScreenState extends State<GuestManagementScreen> {
               ),
               TextField(
                 controller: dietaryController,
-                decoration: const InputDecoration(labelText: 'Restrictions alimentaires'),
+                decoration: const InputDecoration(labelText: 'Préférences alimentaires'),
               ),
-              TextField(
-                controller: allergiesController,
-                decoration: const InputDecoration(labelText: 'Allergies'),
+              const SizedBox(height: 16),
+              StatefulBuilder(
+                builder: (context, setDialogState) {
+                  return DropdownButtonFormField<String>(
+                    value: selectedDrink,
+                    decoration: const InputDecoration(labelText: 'Boisson préférée'),
+                    items: availableDrinks.map((drink) {
+                      return DropdownMenuItem(
+                        value: drink,
+                        child: Text(drink),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setDialogState(() => selectedDrink = value);
+                    },
+                  );
+                },
               ),
             ],
           ),
@@ -289,7 +305,7 @@ class _GuestManagementScreenState extends State<GuestManagementScreen> {
                 email: email,
                 fullName: name,
                 dietaryRestrictions: dietaryController.text.isEmpty ? null : dietaryController.text,
-                allergies: allergiesController.text.isEmpty ? null : allergiesController.text,
+                preferredDrink: selectedDrink,
               );
 
               if (mounted) {
@@ -368,6 +384,11 @@ class _GuestListItem extends StatelessWidget {
               '${guest.numberOfGuests} invité(s) • ${guest.rsvpStatus.toUpperCase()}',
               style: const TextStyle(fontSize: 12),
             ),
+            if (guest.preferredDrink != null && guest.preferredDrink!.isNotEmpty)
+              Text(
+                '🍷 ${guest.preferredDrink}',
+                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+              ),
           ],
         ),
         trailing: Row(
@@ -391,8 +412,8 @@ class _GuestListItem extends StatelessWidget {
     final guestService = context.read<GuestService>();
     final TextEditingController nameController = TextEditingController(text: guest.fullName);
     final TextEditingController dietaryController = TextEditingController(text: guest.dietaryRestrictions ?? '');
-    final TextEditingController allergiesController = TextEditingController(text: guest.allergies ?? '');
     String currentStatus = guest.rsvpStatus;
+    String? selectedDrink = guest.preferredDrink;
 
     showDialog(
       context: context,
@@ -423,11 +444,25 @@ class _GuestListItem extends StatelessWidget {
               const SizedBox(height: 16),
               TextField(
                 controller: dietaryController,
-                decoration: const InputDecoration(labelText: 'Restrictions alimentaires'),
+                decoration: const InputDecoration(labelText: 'Préférences alimentaires'),
               ),
-              TextField(
-                controller: allergiesController,
-                decoration: const InputDecoration(labelText: 'Allergies'),
+              const SizedBox(height: 16),
+              StatefulBuilder(
+                builder: (context, setDialogState) {
+                  return DropdownButtonFormField<String>(
+                    value: selectedDrink,
+                    decoration: const InputDecoration(labelText: 'Boisson préférée'),
+                    items: availableDrinks.map((drink) {
+                      return DropdownMenuItem(
+                        value: drink,
+                        child: Text(drink),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setDialogState(() => selectedDrink = value);
+                    },
+                  );
+                },
               ),
             ],
           ),
@@ -440,13 +475,12 @@ class _GuestListItem extends StatelessWidget {
           ElevatedButton(
             onPressed: () async {
               final dietary = dietaryController.text.isEmpty ? null : dietaryController.text;
-              final allergies = allergiesController.text.isEmpty ? null : allergiesController.text;
 
               final success = await guestService.updateRSVP(
                 guestId: guest.id,
                 attending: currentStatus == 'confirmed',
                 dietaryRestrictions: dietary,
-                allergies: allergies,
+                preferredDrink: selectedDrink,
               );
 
               if (context.mounted) {

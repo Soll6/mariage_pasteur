@@ -7,6 +7,7 @@ import '../services/guest_service.dart';
 import '../models/guest.dart';
 import '../widgets/auth_modal.dart';
 import '../widgets/drawer_opener.dart';
+import '../constants/drinks.dart';
 
 class RSVPScreen extends StatefulWidget {
   const RSVPScreen({super.key});
@@ -20,6 +21,7 @@ class _RSVPScreenState extends State<RSVPScreen> {
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _dietaryController = TextEditingController();
+  String? _selectedDrink;
   bool _attending = true;
   int _guestCount = 1;
   Guest? _currentGuest;
@@ -60,6 +62,7 @@ class _RSVPScreenState extends State<RSVPScreen> {
             _lastNameController.text = guest.fullName.split(' ').skip(1).join(' ');
           }
           _dietaryController.text = guest.dietaryRestrictions ?? '';
+          _selectedDrink = guest.preferredDrink;
         });
       }
     }
@@ -111,6 +114,7 @@ class _RSVPScreenState extends State<RSVPScreen> {
           email: guestEmail,
           fullName: fullName,
           dietaryRestrictions: _dietaryController.text.isEmpty ? null : _dietaryController.text,
+          preferredDrink: _selectedDrink,
         );
 
         if (!success) {
@@ -140,6 +144,7 @@ class _RSVPScreenState extends State<RSVPScreen> {
         attending: _attending,
         numberOfGuests: _guestCount,
         dietaryRestrictions: _dietaryController.text.isEmpty ? null : _dietaryController.text,
+        preferredDrink: _selectedDrink,
       );
 
       if (!success) {
@@ -424,10 +429,12 @@ class _RSVPScreenState extends State<RSVPScreen> {
             const SizedBox(height: 24),
             _buildTextField(
               controller: _dietaryController,
-              label: 'Régime alimentaire ou allergies',
+              label: 'Préférences alimentaires',
               maxLines: 2,
-              hintText: 'Précisez ici vos besoins particuliers...',
+              hintText: 'Ex: végétarien, sans gluten, sans lactose...',
             ),
+            const SizedBox(height: 24),
+            _buildDrinkDropdown(),
             const SizedBox(height: 32),
             SizedBox(
               width: double.infinity,
@@ -534,6 +541,63 @@ class _RSVPScreenState extends State<RSVPScreen> {
             );
           }).toList(),
           onChanged: onChanged,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDrinkDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'BOISSON PRÉFÉRÉE',
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.1,
+            color: AppColors.outline,
+          ),
+        ),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<String>(
+          value: _selectedDrink,
+          decoration: const InputDecoration(
+            hintText: 'Choisissez votre boisson',
+            border: UnderlineInputBorder(
+              borderSide: BorderSide(color: AppColors.outlineVariant),
+            ),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: AppColors.outlineVariant),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: AppColors.primary, width: 2),
+            ),
+          ),
+          items: availableDrinks.map((drink) {
+            return DropdownMenuItem(
+              value: drink,
+              child: Row(
+                children: [
+                  Container(
+                    width: 12,
+                    height: 12,
+                    decoration: BoxDecoration(
+                      color: getDrinkColor(drink),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(drink),
+                ],
+              ),
+            );
+          }).toList(),
+          onChanged: (value) {
+            setState(() {
+              _selectedDrink = value;
+            });
+          },
         ),
       ],
     );

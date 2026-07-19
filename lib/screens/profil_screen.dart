@@ -22,6 +22,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
   Uint8List? _pickedBytes;
   int? _guestNumber;
   String? _rsvpStatus;
+  String? _preferredDrink;
 
   @override
   void initState() {
@@ -43,6 +44,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
         setState(() {
           _guestNumber = guest.guestNumber;
           _rsvpStatus = guest.rsvpStatus;
+          _preferredDrink = guest.preferredDrink;
         });
       }
     } catch (e) {
@@ -288,6 +290,27 @@ class _ProfilScreenState extends State<ProfilScreen> {
                   subtitle: Text('ID: ${profile!.guestId}'),
                 ),
               ),
+              if (_preferredDrink != null && _preferredDrink!.isNotEmpty)
+                Card(
+                  child: ListTile(
+                    leading: const Icon(Icons.local_bar),
+                    title: const Text('Boisson préférée'),
+                    trailing: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryContainer,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text(
+                        _preferredDrink!,
+                        style: TextStyle(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
             ],
             const SizedBox(height: 32),
             SizedBox(

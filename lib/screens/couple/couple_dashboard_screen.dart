@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:mariage_pasteur/services/auth_service.dart';
 import 'package:mariage_pasteur/services/guest_service.dart';
 import 'package:mariage_pasteur/widgets/wedding_app_bar.dart';
+import 'package:mariage_pasteur/widgets/drink_pie_chart.dart';
 
 class CoupleDashboardScreen extends StatefulWidget {
   const CoupleDashboardScreen({super.key});
@@ -89,6 +90,9 @@ class _CoupleDashboardScreenState extends State<CoupleDashboardScreen> {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 32),
+                    // Drink preferences chart
+                    DrinkPieChart(drinkStats: guestService.getDrinkStats()),
                     const SizedBox(height: 32),
                     // Quick actions
                     const Text(
