@@ -120,8 +120,8 @@ class CarteScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: FlutterMap(
           options: MapOptions(
-            initialCenter: LatLng(0.3924, 9.4536),
-            initialZoom: 13.0,
+            initialCenter: LatLng(0.4630312692460624, 9.436918339513689),
+            initialZoom: 14.0,
           ),
           children: [
             TileLayer(
@@ -231,6 +231,8 @@ class CarteScreen extends StatelessWidget {
         return Icons.gavel_outlined;
       case 'groups':
         return Icons.groups_outlined;
+      case 'restaurant':
+        return Icons.restaurant_outlined;
       default:
         return Icons.celebration_outlined;
     }

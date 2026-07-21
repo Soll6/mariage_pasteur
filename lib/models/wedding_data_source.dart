@@ -12,21 +12,21 @@ class WeddingData {
   static const List<Ceremony> ceremonies = [
     Ceremony(
       title: 'Cérémonie Traditionnelle',
-      description: 'Le respect de nos traditions et l\'union de nos deux familles.',
+      description: 'Célébration de notre union selon les rites ancestraux, dans un cadre chaleureux partagé avec nos familles.',
       time: '08:30',
-      location: 'Résidence Familiale',
+      location: 'RH Ronda (Résidence Hôtelière)',
       icon: 'groups',
-      latitude: 0.3900,
-      longitude: 9.4600,
+      latitude: 0.4630312692460624,
+      longitude: 9.436918339513689,
     ),
     Ceremony(
       title: 'Bénédiction',
-      description: 'Une bénédiction solennelle de notre union devant Dieu.',
+      description: 'Bénédiction solennelle de notre union devant Dieu, dans la magnifique salle de la Résidence Hôtelière.',
       time: '14:00',
-      location: 'Cathédrale Notre-Dame',
+      location: 'RH Ronda (Résidence Hôtelière)',
       icon: 'church',
-      latitude: 0.3924,
-      longitude: 9.4536,
+      latitude: 0.4630312692460624,
+      longitude: 9.436918339513689,
     ),
     Ceremony(
       title: 'Mariage Civil',
@@ -37,22 +37,31 @@ class WeddingData {
       latitude: 0.49554166723996285,
       longitude: 9.393235409060534,
     ),
+    Ceremony(
+      title: 'Dîner',
+      description: 'Un dîner festif pour célébrer notre union en compagnie de nos proches, dans un cadre élégant et chaleureux.',
+      time: '20:00',
+      location: 'RH Ronda (Résidence Hôtelière)',
+      icon: 'restaurant',
+      latitude: 0.4630312692460624,
+      longitude: 9.436918339513689,
+    ),
   ];
 
   static const List<TimelineEvent> timeline = [
     TimelineEvent(
       title: 'Cérémonie Traditionnelle',
-      description: 'L\'union de nos deux familles selon nos rites ancestraux. Un voyage au cœur de nos racines, bercé par les chants, les présents et la sagesse des anciens.',
+      description: 'Célébration de notre union selon les rites ancestraux. Un voyage au cœur de nos racines, dans un cadre chaleureux partagé avec nos familles et les plus anciens.',
       time: '08:30',
-      location: 'Résidence Familiale, Quartier Louis',
+      location: 'RH Ronda (Résidence Hôtelière)',
       icon: 'groups',
       imageUrl: 'assets/images/tradition.jpg',
     ),
     TimelineEvent(
       title: 'Bénédiction',
-      description: 'La bénédiction de notre union devant Dieu. Un moment de spiritualité intense et de partage musical sous les voûtes de la cathédrale.',
+      description: 'Bénédiction solennelle de notre union devant Dieu. Un moment de spiritualité intense et de partage dans la magnifique salle de la Résidence Hôtelière.',
       time: '14:00',
-      location: 'Cathédrale Notre-Dame, Libreville',
+      location: 'RH Ronda (Résidence Hôtelière)',
       icon: 'church',
       imageUrl: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800',
     ),
@@ -63,6 +72,14 @@ class WeddingData {
       location: 'Mairie d\'Akanda',
       icon: 'gavel',
       imageUrl: 'assets/images/mairie d\'Akanda.jpeg',
+    ),
+    TimelineEvent(
+      title: 'Dîner',
+      description: 'Un dîner festif pour célébrer notre union en compagnie de nos proches. Ambiance musicale, discours et partage dans un cadre élégant à la Résidence Hôtelière.',
+      time: '20:00',
+      location: 'RH Ronda (Résidence Hôtelière)',
+      icon: 'restaurant',
+      imageUrl: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800',
     ),
   ];
 
@@ -97,12 +114,12 @@ class WeddingData {
     {
       'icon': 'local_parking',
       'title': 'Stationnement',
-      'description': 'Parking gratuit sécurisé disponible sur les deux sites.',
+      'description': 'Parking gratuit sécurisé disponible devant la salle RH Ronda.',
     },
     {
       'icon': 'local_taxi',
       'title': 'Navettes',
-      'description': 'Des navettes privées assureront la liaison entre la Cathédrale et le Radisson.',
+      'description': 'Des navettes privées assureront la liaison entre l\'aéroport Léon-Mba et la salle des fêtes RH Ronda.',
     },
     {
       'icon': 'hotel',

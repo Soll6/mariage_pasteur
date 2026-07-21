@@ -90,7 +90,7 @@ class ProgrammeScreen extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
-            'Célébrons ensemble l\'amour, la tradition et notre engagement éternel sous le soleil de Libreville.',
+            'Célébrons ensemble l\'amour, la tradition et notre engagement éternel. La plupart des festivités se tiendront à la Résidence Hôtelière RH Ronda.',
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 16,
@@ -288,6 +288,8 @@ class _TimelineEventCard extends StatelessWidget {
         return Icons.groups_outlined;
       case 'church':
         return Icons.church_outlined;
+      case 'restaurant':
+        return Icons.restaurant_outlined;
       default:
         return Icons.celebration_outlined;
     }

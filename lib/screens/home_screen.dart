@@ -662,6 +662,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       case 'church': return Icons.church_outlined;
       case 'groups': return Icons.groups_outlined;
       case 'gavel': return Icons.gavel_outlined;
+      case 'restaurant': return Icons.restaurant_outlined;
       default: return Icons.celebration_outlined;
     }
   }
